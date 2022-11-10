@@ -1,0 +1,1 @@
+# pendek.in
