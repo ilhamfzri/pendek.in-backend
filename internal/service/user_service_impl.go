@@ -80,5 +80,16 @@ func (service *UserServiceImpl) Login(ctx context.Context, request web.UserLogin
 	}
 
 	return tokenResponse, repoErr
+}
 
+func (service *UserServiceImpl) Verify(ctx context.Context, request web.UserVerifyRequest) error {
+	err := service.Validate.Struct(request)
+	helper.PanicIfError(err)
+
+	tx, err := service.DB.Begin()
+	helper.PanicIfError(err)
+	defer helper.CommitOrRollback(tx)
+
+	repoErr := service.UserRepository.Verify(ctx, tx, request.Email, request.Code)
+	return repoErr
 }

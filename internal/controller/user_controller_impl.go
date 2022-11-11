@@ -67,5 +67,29 @@ func (controller *UserControllerImpl) Login(writer http.ResponseWriter, request 
 		}
 		helper.WriteToResponse(writer, http.StatusCreated, webResponse)
 	}
+}
 
+func (controller *UserControllerImpl) Verify(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
+	userVerifyRequest := web.UserVerifyRequest{}
+
+	userVerifyRequest.Email = request.URL.Query().Get("email")
+	userVerifyRequest.Code = request.URL.Query().Get("code")
+
+	ctx := context.Background()
+	errService := controller.UserService.Verify(ctx, userVerifyRequest)
+
+	if errService != nil {
+		webResponse := web.WebResponseFailed{
+			Status:  "failed",
+			Message: errService.Error(),
+		}
+		helper.WriteToResponse(writer, http.StatusBadRequest, webResponse)
+
+	} else {
+		webResponse := web.WebResponseSuccess{
+			Status:  "success",
+			Message: "email verification success",
+		}
+		helper.WriteToResponse(writer, http.StatusOK, webResponse)
+	}
 }

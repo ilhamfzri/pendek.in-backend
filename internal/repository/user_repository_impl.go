@@ -99,6 +99,42 @@ func (repository *UserRepositoryImpl) Login(ctx context.Context, tx *sql.Tx, use
 	return nil
 }
 
+func (repository *UserRepositoryImpl) Verify(ctx context.Context, tx *sql.Tx, email string, code string) error {
+	SQL_VERIFY := `SELECT v.id
+					FROM verify_and_forget_password as v
+					LEFT JOIN users as u
+					ON v.user_id=u.id
+					WHERE 
+						u.email=$1 AND
+						v.code=$2 AND
+						v.active=true
+					LIMIT 1`
+	rows, err := tx.QueryContext(ctx, SQL_VERIFY, email, code)
+	helper.PanicIfError(err)
+
+	if !rows.Next() {
+		return errors.New("verification link isn't valid")
+	}
+	rows.Close()
+
+	var verifyId int
+	rows.Scan(&verifyId)
+
+	SQL_UPDATE_VERIFY_STATUS_USER := `UPDATE users
+									SET verified=true
+									WHERE email=$1`
+	_, err = tx.ExecContext(ctx, SQL_UPDATE_VERIFY_STATUS_USER, email)
+	helper.PanicIfError(err)
+
+	SQL_UPDATE_VERIFY_STATUS_ENTRY := `UPDATE verify_and_forget_password
+											SET active=false
+											WHERE id=$1`
+	_, err = tx.ExecContext(ctx, SQL_UPDATE_VERIFY_STATUS_ENTRY, verifyId)
+	helper.PanicIfError(err)
+
+	return nil
+}
+
 func (repository *UserRepositoryImpl) Update(ctx context.Context, tx *sql.Tx, user domain.User) (domain.User, error) {
 	panic("not implemented") // TODO: Implement
 }
