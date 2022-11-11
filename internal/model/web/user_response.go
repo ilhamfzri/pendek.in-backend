@@ -1,12 +1,10 @@
 package web
 
-import "time"
-
 type UserResponse struct {
-	Id          int       `json:"id"`
-	FirstName   string    `json:"first_name"`
-	LastName    string    `json:"last_name"`
-	Username    string    `json:"username"`
-	Email       string    `json:"email"`
-	ActivatedAt time.Time `json:"activated_at"`
+	Id        int    `json:"id,omitempty"`
+	Username  string `json:"username,omitempty"`
+	FirstName string `json:"first_name,omitempty"`
+	LastName  string `json:"last_name,omitempty"`
+	Bio       string `json:"bio,omitempty"`
+	Email     string `json:"email,omitempty"`
 }

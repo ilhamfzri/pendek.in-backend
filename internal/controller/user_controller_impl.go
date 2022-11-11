@@ -32,13 +32,38 @@ func (controller *UserControllerImpl) Register(writer http.ResponseWriter, reque
 			Status:  "failed",
 			Message: errService.Error(),
 		}
-		helper.WriteToResponse(writer, http.StatusForbidden, webResponse)
+		helper.WriteToResponse(writer, http.StatusBadRequest, webResponse)
 
 	} else {
 		webResponse := web.WebResponseSuccess{
 			Status:  "success",
 			Message: "success create a new account",
 			Data:    userResponse,
+		}
+		helper.WriteToResponse(writer, http.StatusCreated, webResponse)
+	}
+
+}
+
+func (controller *UserControllerImpl) Login(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
+	userLoginRequest := web.UserLoginRequest{}
+	helper.ReadFromRequestBody(request, &userLoginRequest)
+
+	ctx := context.Background()
+	tokenResponse, errService := controller.UserService.Login(ctx, userLoginRequest)
+
+	if errService != nil {
+		webResponse := web.WebResponseFailed{
+			Status:  "failed",
+			Message: errService.Error(),
+		}
+		helper.WriteToResponse(writer, http.StatusBadRequest, webResponse)
+
+	} else {
+		webResponse := web.WebResponseSuccess{
+			Status:  "success",
+			Message: "login success",
+			Data:    tokenResponse,
 		}
 		helper.WriteToResponse(writer, http.StatusCreated, webResponse)
 	}

@@ -8,5 +8,5 @@ import (
 
 type UserService interface {
 	Register(ctx context.Context, request web.UserRegisterRequest) (web.UserResponse, error)
-	FindByUsername(ctx context.Context) (web.UserResponse, error)
+	Login(ctx context.Context, request web.UserLoginRequest) (web.TokenResponse, error)
 }

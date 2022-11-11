@@ -13,6 +13,7 @@ func NewUserRouter(userController controller.UserController) *httprouter.Router 
 	router.GET("/v1/api/users/test", func(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
 		fmt.Fprintf(writer, "pendek.in API")
 	})
-	router.POST("/v1/api/users/register", userController.Register)
+	router.POST("/v1/users/register", userController.Register)
+	router.POST("/v1/users/login", userController.Login)
 	return router
 }

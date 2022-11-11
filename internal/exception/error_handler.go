@@ -1,6 +1,7 @@
 package exception
 
 import (
+	"fmt"
 	"net/http"
 
 	"github.com/go-playground/validator"
@@ -30,6 +31,7 @@ func validationErrors(writer http.ResponseWriter, request *http.Request, err int
 }
 
 func internalServerError(writer http.ResponseWriter, request *http.Request, err interface{}) {
+	fmt.Println(err)
 	webResponse := web.WebResponseFailed{
 		Status:  "failed",
 		Message: "internal server error",
