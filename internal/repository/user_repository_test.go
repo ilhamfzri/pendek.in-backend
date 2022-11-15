@@ -119,7 +119,6 @@ func userCreateSuccess(t *testing.T, userRepository UserRepository, db *sql.DB) 
 	assert.Nil(t, err)
 	assert.Equal(t, "usertest", user.Username)
 	assert.Equal(t, "usertest@example.com", user.Email)
-	assert.Equal(t, "example_hash_password", user.Password)
 }
 
 func userCreateFailedUsernameUsed(t *testing.T, userRepository UserRepository, db *sql.DB) {
@@ -301,4 +300,37 @@ func userLoginFailedUserNotVerified(t *testing.T, userRepository UserRepository,
 	err = userRepository.Login(ctx, tx, user)
 	assert.NotNil(t, err)
 	assert.Equal(t, "account isn't verified", err.Error())
+}
+
+func TestUserRepositoryUpdate(t *testing.T) {
+	userRepository := NewUserRepository()
+	db := initTestUserDB()
+
+	t.Run("[User Repo][Update][Success]", func(t *testing.T) {
+		insertDummyVerifiedUser(db, userRepository)
+		userUpdateSuccess(t, userRepository, db)
+		clearUserTable(db)
+	})
+
+}
+
+func userUpdateSuccess(t *testing.T, userRepository UserRepository, db *sql.DB) {
+	ctx := context.Background()
+	tx, err := db.Begin()
+	helper.PanicIfError(err)
+	defer helper.CommitOrRollback(tx)
+
+	user := domain.User{
+		Username:  "usertest",
+		FirstName: "test_firstname",
+		LastName:  "test_lastname",
+		Bio:       "test_bio",
+	}
+
+	user, err = userRepository.Update(ctx, tx, user)
+	assert.Equal(t, "usertest", user.Username)
+	assert.Equal(t, "test_firstname", user.FirstName)
+	assert.Equal(t, "test_lastname", user.LastName)
+	assert.Equal(t, "test_bio", user.Bio)
+	assert.Nil(t, err)
 }

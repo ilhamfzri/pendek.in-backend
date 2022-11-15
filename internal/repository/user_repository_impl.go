@@ -46,6 +46,11 @@ func (repository *UserRepositoryImpl) Create(ctx context.Context, tx *sql.Tx, us
 	user.UpdatedAt = timeNow
 	user.CreatedAt = timeNow
 
+	// hashing password
+	hashPassword, err := helper.HashPassword(user.Password)
+	helper.PanicIfError(err)
+	user.Password = hashPassword
+
 	err = tx.QueryRowContext(ctx, SQL_CREATE_ACCOUNT,
 		user.Username,
 		user.Email,
@@ -87,15 +92,16 @@ func (repository *UserRepositoryImpl) Login(ctx context.Context, tx *sql.Tx, use
 	err = rows.Scan(&verified, &currentPassword)
 	helper.PanicIfError(err)
 
+	correctPassword := helper.CheckPasswordHash(user.Password, currentPassword)
+	if !correctPassword {
+		return errors.New("password incorrect")
+	}
+
 	// check if account is verified
 	if !verified {
 		return errors.New("account isn't verified")
 	}
 
-	// check if password is correct
-	if currentPassword != user.Password {
-		return errors.New("password incorrect")
-	}
 	return nil
 }
 
@@ -136,20 +142,34 @@ func (repository *UserRepositoryImpl) Verify(ctx context.Context, tx *sql.Tx, em
 }
 
 func (repository *UserRepositoryImpl) Update(ctx context.Context, tx *sql.Tx, user domain.User) (domain.User, error) {
-	panic("not implemented") // TODO: Implement
+	SQL_UPDATE_USER := `UPDATE users
+						SET first_name=$1,
+							last_name=$2,
+							bio=$3
+						WHERE username=$4`
+	_, err := tx.ExecContext(ctx, SQL_UPDATE_USER, user.FirstName, user.LastName, user.Bio, user.Username)
+	helper.PanicIfError(err)
+	return user, nil
 }
 
 func (repository *UserRepositoryImpl) FindByUsername(ctx context.Context, tx *sql.Tx, username string) (domain.User, error) {
-	// check username is already used
 	user := domain.User{}
-	SQL_CHECK_USERNAME := "SELECT id, first_name, last_name, username, email FROM users WHERE username=$1 LIMIT 1"
+	SQL_CHECK_USERNAME := `SELECT id, username, first_name, last_name, bio, email 
+							FROM users 
+							WHERE username=$1 
+							LIMIT 1`
 	rows, err := tx.QueryContext(ctx, SQL_CHECK_USERNAME, username)
 	helper.PanicIfError(err)
 	if rows.Next() {
-		err = rows.Scan(&user.Id, &user.FirstName, &user.LastName, &user.Username, &user.Email)
+		err = rows.Scan(&user.Id, &user.FirstName, &user.LastName, &user.Username, &user.Bio, &user.Email)
 		helper.PanicIfError(err)
 		return user, nil
 	} else {
-		return user, errors.New("username is already used")
+		return user, errors.New("data not found")
 	}
+}
+
+func (repository *UserRepositoryImpl) UpdatePassword(ctx context.Context, tx *sql.Tx, user domain.User, newPassword string) error {
+	return errors.New("update password")
+	// validate current password and new password
 }

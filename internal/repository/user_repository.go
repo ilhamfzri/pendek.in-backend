@@ -14,4 +14,5 @@ type UserRepository interface {
 	Update(ctx context.Context, tx *sql.Tx, user domain.User) (domain.User, error)
 	Login(ctx context.Context, tx *sql.Tx, user domain.User) error
 	FindByUsername(ctx context.Context, tx *sql.Tx, username string) (domain.User, error)
+	UpdatePassword(ctx context.Context, tx *sql.Tx, user domain.User, newPassword string) error
 }
