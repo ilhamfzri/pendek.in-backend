@@ -3,7 +3,15 @@ package helper
 import (
 	"encoding/json"
 	"net/http"
+	"strings"
 )
+
+func GetAuthToken(request *http.Request) string {
+	bearerToken := request.Header.Get("Authorization")
+	splitToken := strings.Split(bearerToken, "Bearer ")
+	jwtToken := splitToken[1]
+	return jwtToken
+}
 
 func ReadFromRequestBody(request *http.Request, result interface{}) {
 	decoder := json.NewDecoder(request.Body)

@@ -3,7 +3,6 @@ package service
 import (
 	"context"
 	"database/sql"
-	"time"
 
 	"github.com/go-playground/validator"
 	"github.com/google/uuid"
@@ -17,13 +16,15 @@ type UserServiceImpl struct {
 	UserRepository repository.UserRepository
 	DB             *sql.DB
 	Validate       *validator.Validate
+	Jwt            *helper.Jwt
 }
 
-func NewUserService(userRepository repository.UserRepository, DB *sql.DB, validate *validator.Validate) UserService {
+func NewUserService(userRepository repository.UserRepository, DB *sql.DB, validate *validator.Validate, jwtClient *helper.Jwt) UserService {
 	return &UserServiceImpl{
 		UserRepository: userRepository,
 		DB:             DB,
 		Validate:       validate,
+		Jwt:            jwtClient,
 	}
 }
 
@@ -68,12 +69,8 @@ func (service *UserServiceImpl) Login(ctx context.Context, request web.UserLogin
 		Password: request.Password,
 	}
 
-	repoErr := service.UserRepository.Login(ctx, tx, user)
-
-	// TODO : GENERATE JWT TOKEN
-	token := uuid.New().String()
-	valid_until := time.Now()
-
+	user, repoErr := service.UserRepository.Login(ctx, tx, user)
+	token, valid_until := service.Jwt.NewToken(user.Username, user.Email)
 	tokenResponse := web.TokenResponse{
 		AccessToken: token,
 		ValidUntil:  valid_until,
@@ -92,4 +89,42 @@ func (service *UserServiceImpl) Verify(ctx context.Context, request web.UserVeri
 
 	repoErr := service.UserRepository.Verify(ctx, tx, request.Email, request.Code)
 	return repoErr
+}
+
+func (service *UserServiceImpl) ChangePassword(ctx context.Context, request web.UserChangePasswordRequest, token string) error {
+	err := service.Validate.Struct(request)
+	helper.PanicIfError(err)
+
+	claims := service.Jwt.GetClaims(token)
+	tx, err := service.DB.Begin()
+	helper.PanicIfError(err)
+	defer helper.CommitOrRollback(tx)
+
+	repoErr := service.UserRepository.UpdatePassword(ctx, tx, claims.Username, request.CurrentPassword, request.NewPassword)
+	return repoErr
+}
+
+func (service *UserServiceImpl) UpdateInformation(ctx context.Context, request web.UserUpdateInfoRequest, token string) (web.UserResponse, error) {
+	err := service.Validate.Struct(request)
+	helper.PanicIfError(err)
+
+	claims := service.Jwt.GetClaims(token)
+	tx, err := service.DB.Begin()
+	helper.PanicIfError(err)
+	defer helper.CommitOrRollback(tx)
+
+	userRequest := domain.User{
+		FirstName: request.FirstName,
+		LastName:  request.LastName,
+		Bio:       request.Bio,
+	}
+
+	userData, err := service.UserRepository.FindByUsername(ctx, tx, claims.Username)
+	helper.PanicIfError(err)
+
+	helper.UserSetDefaultValue(&userRequest, &userData)
+	userResult, repoErr := service.UserRepository.Update(ctx, tx, userRequest)
+	userResponse := helper.ToUserResponse(userResult)
+
+	return userResponse, repoErr
 }

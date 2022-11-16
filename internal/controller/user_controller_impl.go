@@ -93,3 +93,50 @@ func (controller *UserControllerImpl) Verify(writer http.ResponseWriter, request
 		helper.WriteToResponse(writer, http.StatusOK, webResponse)
 	}
 }
+
+func (controller *UserControllerImpl) ChangePassword(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
+	token := helper.GetAuthToken(request)
+	userChangePasswordRequest := web.UserChangePasswordRequest{}
+	helper.ReadFromRequestBody(request, &userChangePasswordRequest)
+
+	ctx := context.Background()
+	errService := controller.UserService.ChangePassword(ctx, userChangePasswordRequest, token)
+	if errService != nil {
+		webResponse := web.WebResponseFailed{
+			Status:  "failed",
+			Message: errService.Error(),
+		}
+		helper.WriteToResponse(writer, http.StatusBadRequest, webResponse)
+	} else {
+		webResponse := web.WebResponseSuccess{
+			Status:  "success",
+			Message: "success changed password",
+		}
+		helper.WriteToResponse(writer, http.StatusOK, webResponse)
+	}
+}
+
+func (controller *UserControllerImpl) UpdateInformation(writer http.ResponseWriter, request *http.Request, params httprouter.Params) {
+	token := helper.GetAuthToken(request)
+	userUpdateInfoRequest := web.UserUpdateInfoRequest{}
+	helper.ReadFromRequestBody(request, &userUpdateInfoRequest)
+
+	ctx := context.Background()
+	userResponse, errService := controller.UserService.UpdateInformation(ctx, userUpdateInfoRequest, token)
+
+	if errService != nil {
+		webResponse := web.WebResponseFailed{
+			Status:  "failed",
+			Message: errService.Error(),
+		}
+		helper.WriteToResponse(writer, http.StatusBadRequest, webResponse)
+
+	} else {
+		webResponse := web.WebResponseSuccess{
+			Status:  "success",
+			Message: "success update account information",
+			Data:    userResponse,
+		}
+		helper.WriteToResponse(writer, http.StatusCreated, webResponse)
+	}
+}

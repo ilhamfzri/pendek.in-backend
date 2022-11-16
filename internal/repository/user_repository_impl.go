@@ -76,33 +76,44 @@ func (repository *UserRepositoryImpl) CreateVerifyCode(ctx context.Context, tx *
 	return err
 }
 
-func (repository *UserRepositoryImpl) Login(ctx context.Context, tx *sql.Tx, user domain.User) error {
+func (repository *UserRepositoryImpl) Login(ctx context.Context, tx *sql.Tx, user domain.User) (domain.User, error) {
 	// check if email is exist
-	SQL_CHECK_EMAIL := `SELECT verified,password 
+	SQL_CHECK_EMAIL := `SELECT verified,password,username
 						FROM users 
 						WHERE email=$1 LIMIT 1`
 	rows, err := tx.QueryContext(ctx, SQL_CHECK_EMAIL, user.Email)
 	helper.PanicIfError(err)
 	if !rows.Next() {
-		return errors.New("email isn' registered")
+		return domain.User{}, errors.New("email isn' registered")
 	}
 
 	var currentPassword string
 	var verified bool
-	err = rows.Scan(&verified, &currentPassword)
+	var username string
+
+	err = rows.Scan(&verified, &currentPassword, &username)
+	rows.Close()
 	helper.PanicIfError(err)
 
 	correctPassword := helper.CheckPasswordHash(user.Password, currentPassword)
 	if !correctPassword {
-		return errors.New("password incorrect")
+		return domain.User{}, errors.New("password incorrect")
 	}
 
 	// check if account is verified
 	if !verified {
-		return errors.New("account isn't verified")
+		return domain.User{}, errors.New("account isn't verified")
 	}
 
-	return nil
+	timeNow := time.Now()
+	SQL_UPDATE_LOGIN_TIME := `UPDATE users
+							SET last_login=$1
+							WHERE email=$2`
+	_, err = tx.ExecContext(ctx, SQL_UPDATE_LOGIN_TIME, timeNow, user.Email)
+	helper.PanicIfError(err)
+
+	user.Username = username
+	return user, nil
 }
 
 func (repository *UserRepositoryImpl) Verify(ctx context.Context, tx *sql.Tx, email string, code string) error {
@@ -145,9 +156,10 @@ func (repository *UserRepositoryImpl) Update(ctx context.Context, tx *sql.Tx, us
 	SQL_UPDATE_USER := `UPDATE users
 						SET first_name=$1,
 							last_name=$2,
-							bio=$3
-						WHERE username=$4`
-	_, err := tx.ExecContext(ctx, SQL_UPDATE_USER, user.FirstName, user.LastName, user.Bio, user.Username)
+							bio=$3,
+							updated_at=$4
+						WHERE username=$5`
+	_, err := tx.ExecContext(ctx, SQL_UPDATE_USER, user.FirstName, user.LastName, user.Bio, time.Now(), user.Username)
 	helper.PanicIfError(err)
 	return user, nil
 }
@@ -160,16 +172,57 @@ func (repository *UserRepositoryImpl) FindByUsername(ctx context.Context, tx *sq
 							LIMIT 1`
 	rows, err := tx.QueryContext(ctx, SQL_CHECK_USERNAME, username)
 	helper.PanicIfError(err)
+	var id sql.NullInt32
+	var firstName, lastName, userName, bio, email sql.NullString
+
+	defer rows.Close()
 	if rows.Next() {
-		err = rows.Scan(&user.Id, &user.FirstName, &user.LastName, &user.Username, &user.Bio, &user.Email)
+		err = rows.Scan(&id, &userName, &firstName, &lastName, &bio, &email)
+		user.Id = int(id.Int32)
+		user.Username = userName.String
+		user.FirstName = firstName.String
+		user.LastName = lastName.String
+		user.Bio = bio.String
+		user.Email = email.String
+
 		helper.PanicIfError(err)
 		return user, nil
 	} else {
 		return user, errors.New("data not found")
 	}
+
 }
 
-func (repository *UserRepositoryImpl) UpdatePassword(ctx context.Context, tx *sql.Tx, user domain.User, newPassword string) error {
-	return errors.New("update password")
-	// validate current password and new password
+func (repository *UserRepositoryImpl) UpdatePassword(ctx context.Context, tx *sql.Tx, username string, currentPassword string, newPassword string) error {
+	SQL_GET_PASSWORD := `SELECT password
+						FROM users
+						WHERE username=$1`
+	rows, err := tx.QueryContext(ctx, SQL_GET_PASSWORD, username)
+	helper.PanicIfError(err)
+	defer rows.Close()
+
+	if !rows.Next() {
+		return errors.New("error update password")
+	}
+
+	var currentHashPassword string
+	rows.Scan(&currentHashPassword)
+	rows.Close()
+
+	correctPassword := helper.CheckPasswordHash(currentPassword, currentHashPassword)
+	if !correctPassword {
+		return errors.New("current password incorrect")
+	}
+
+	SQL_UPDATE_PASSWORD := `UPDATE users
+							SET password=$1,
+								updated_at=$2
+							WHERE username=$3`
+
+	newHashPassword, err := helper.HashPassword(newPassword)
+	helper.PanicIfError(err)
+
+	_, err = tx.ExecContext(ctx, SQL_UPDATE_PASSWORD, newHashPassword, time.Now(), username)
+	helper.PanicIfError(err)
+	return nil
 }

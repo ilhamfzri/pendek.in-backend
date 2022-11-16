@@ -246,11 +246,11 @@ func userLoginSuccess(t *testing.T, userRepository UserRepository, db *sql.DB) {
 	defer helper.CommitOrRollback(tx)
 
 	user := domain.User{
-		Username: "usertest",
 		Email:    "usertest@example.com",
 		Password: "example_hash_password", //Hashed Password
 	}
-	err = userRepository.Login(ctx, tx, user)
+	user, err = userRepository.Login(ctx, tx, user)
+	assert.Equal(t, "usertest", user.Username)
 	assert.Nil(t, err)
 }
 
@@ -265,7 +265,7 @@ func userLoginFailedEmailNotRegistered(t *testing.T, userRepository UserReposito
 		Email:    "usertest2@example.com",
 		Password: "example_hash_password", //Hashed Password
 	}
-	err = userRepository.Login(ctx, tx, user)
+	_, err = userRepository.Login(ctx, tx, user)
 	assert.NotNil(t, err)
 	assert.Equal(t, "email isn' registered", err.Error())
 }
@@ -281,7 +281,7 @@ func userLoginFailedPasswordIncorrect(t *testing.T, userRepository UserRepositor
 		Email:    "usertest@example.com",
 		Password: "example_wrong_hash_password", //Hashed Password
 	}
-	err = userRepository.Login(ctx, tx, user)
+	_, err = userRepository.Login(ctx, tx, user)
 	assert.NotNil(t, err)
 	assert.Equal(t, "password incorrect", err.Error())
 }
@@ -293,11 +293,10 @@ func userLoginFailedUserNotVerified(t *testing.T, userRepository UserRepository,
 	defer helper.CommitOrRollback(tx)
 
 	user := domain.User{
-		Username: "usertest",
 		Email:    "usertest@example.com",
 		Password: "example_hash_password", //Hashed Password
 	}
-	err = userRepository.Login(ctx, tx, user)
+	_, err = userRepository.Login(ctx, tx, user)
 	assert.NotNil(t, err)
 	assert.Equal(t, "account isn't verified", err.Error())
 }
@@ -333,4 +332,49 @@ func userUpdateSuccess(t *testing.T, userRepository UserRepository, db *sql.DB) 
 	assert.Equal(t, "test_lastname", user.LastName)
 	assert.Equal(t, "test_bio", user.Bio)
 	assert.Nil(t, err)
+}
+
+func TestUserRepositoryUpdatePassword(t *testing.T) {
+	userRepository := NewUserRepository()
+	db := initTestUserDB()
+	t.Run("[User Repo][Update][Success]", func(t *testing.T) {
+		insertDummyVerifiedUser(db, userRepository)
+		userUpdatePasswordSuccess(t, userRepository, db)
+		clearUserTable(db)
+	})
+	t.Run("[User Repo][Update][Failed:Current Password Incorrect]", func(t *testing.T) {
+		insertDummyVerifiedUser(db, userRepository)
+		userUpdatePasswordFailedCurrentPassword(t, userRepository, db)
+		clearUserTable(db)
+	})
+
+}
+
+func userUpdatePasswordSuccess(t *testing.T, userRepository UserRepository, db *sql.DB) {
+	ctx := context.Background()
+	tx, err := db.Begin()
+	helper.PanicIfError(err)
+	defer helper.CommitOrRollback(tx)
+
+	username := "usertest"
+	currentPassword := "example_hash_password"
+	newPassword := "new_example_hash_password"
+
+	err = userRepository.UpdatePassword(ctx, tx, username, currentPassword, newPassword)
+	assert.Nil(t, err)
+}
+
+func userUpdatePasswordFailedCurrentPassword(t *testing.T, userRepository UserRepository, db *sql.DB) {
+	ctx := context.Background()
+	tx, err := db.Begin()
+	helper.PanicIfError(err)
+	defer helper.CommitOrRollback(tx)
+
+	username := "usertest"
+	currentPassword := "example_wrong_hash_password"
+	newPassword := "new_example_hash_password"
+
+	err = userRepository.UpdatePassword(ctx, tx, username, currentPassword, newPassword)
+	assert.NotNil(t, err)
+	assert.Equal(t, "current password incorrect", err.Error())
 }

@@ -15,5 +15,8 @@ func NewUserRouter(userController controller.UserController) *httprouter.Router 
 	})
 	router.POST("/v1/users/register", userController.Register)
 	router.POST("/v1/users/login", userController.Login)
+	router.GET("/v1/users/verify", userController.Verify)
+	router.POST("/v1/users/change-password", userController.ChangePassword)
+	router.PUT("/v1/users/update-info", userController.UpdateInformation)
 	return router
 }
