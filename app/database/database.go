@@ -5,6 +5,7 @@ import (
 	"net/url"
 	"strconv"
 
+	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/ilhamfzri/pendek.in/app/logger"
 	"github.com/ilhamfzri/pendek.in/config"
 	"github.com/ilhamfzri/pendek.in/internal/model/domain"
@@ -36,6 +37,14 @@ func NewDatabaseConnection(cfg config.DatabaseConfig, log *logger.Logger) *gorm.
 
 	log.Info().Msg("[Database] Sucessfull Ping Database")
 	return db
+}
+
+func NewDatabaseConnectionMock() *gorm.DB {
+	sqlDB, _, _ := sqlmock.New()
+	gormDB, _ := gorm.Open(postgres.New(postgres.Config{
+		Conn: sqlDB,
+	}), &gorm.Config{})
+	return gormDB
 }
 
 func Migration(DB *gorm.DB, log *logger.Logger) {
