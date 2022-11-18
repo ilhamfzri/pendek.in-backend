@@ -4,15 +4,8 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt"
+	"github.com/ilhamfzri/pendek.in/config"
 )
-
-func NewJwt(signingKey string, expiredTimeDay int, issuer string) *Jwt {
-	return &Jwt{
-		SigningKey:     signingKey,
-		ExpiredTimeDay: expiredTimeDay,
-		Issuer:         issuer,
-	}
-}
 
 type Jwt struct {
 	SigningKey     string
@@ -20,7 +13,16 @@ type Jwt struct {
 	Issuer         string
 }
 
+func NewJwt(cfg config.JwtConfig) *Jwt {
+	return &Jwt{
+		SigningKey:     cfg.SigningKey,
+		ExpiredTimeDay: cfg.ExpiredTimeDay,
+		Issuer:         cfg.Issuer,
+	}
+}
+
 type JwtUserClaims struct {
+	Id       string `json:"id"`
 	Username string `json:"username"`
 	Email    string `json:"email"`
 	jwt.StandardClaims
@@ -35,9 +37,10 @@ func (jwtClient *Jwt) GetClaims(jwtToken string) JwtUserClaims {
 	return jwtClaims
 }
 
-func (jwtClient *Jwt) NewToken(username string, email string) (string, time.Time) {
+func (jwtClient *Jwt) NewToken(id string, username string, email string) (string, time.Time, error) {
 	expiredTime := time.Now().Add(time.Hour * 24 * time.Duration(jwtClient.ExpiredTimeDay))
 	jwtClaims := JwtUserClaims{
+		id,
 		username,
 		email,
 		jwt.StandardClaims{
@@ -47,6 +50,5 @@ func (jwtClient *Jwt) NewToken(username string, email string) (string, time.Time
 	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwtClaims)
 	key, err := token.SignedString([]byte(jwtClient.SigningKey))
-	PanicIfError(err)
-	return key, expiredTime
+	return key, expiredTime, err
 }

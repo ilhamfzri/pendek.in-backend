@@ -1,0 +1,81 @@
+Table users {
+  id int [pk, increment] // auto-increment
+  username varchar(25)
+  first_name varchar(20)
+  last_name varchar(20)
+  bio varchar(255)
+  email varchar(50)
+  password varchar(16)
+  verified bool
+  last_login datetime
+  created_at datetime
+  updated_at datetime
+}
+
+Table verify_and_forgot_password {
+  id int [pk, increment]
+  user_id int
+  type string
+  code string
+  active bool
+  date datetime
+}
+
+Table links {
+  id int [pk, increment]
+  users_id int
+  type int
+  private bool
+  disable bool
+  short_link string
+  long_link string
+  total_click_count int
+  created_at datetime
+}
+
+Table links_analytic_date {
+  id int [pk, increment]
+  link_id int
+  date datetime
+  click_count int
+}
+
+Table links_analytic_geo {
+  id int [pk, increment]
+   link_id int
+   country_data json
+   city_data json
+   last_update datetime
+  }
+
+Table links_analytic_device {
+  id int [pk, increment]
+  link_id int
+  mobile int
+  tablet int
+  desktop int
+  other int
+  last_update datetime
+}
+
+Table links_type {
+  id int [pk, increment]
+  type_name string
+  icon_link string
+}
+
+Table links_transactions {
+  id int [pk]
+  link_id int [pk]
+  user_agent string
+  client_ip string
+  date datetime
+}
+
+ref: users.id < verify_and_forgot_password.user_id
+ref: users.id < links.users_id
+ref: links_analytic_date.link_id > links.id
+ref: links.type > links_type.id
+ref: links_transactions.link_id > links.id
+ref: links_analytic_device.link_id - links.id
+ref: links_analytic_geo.link_id - links.id

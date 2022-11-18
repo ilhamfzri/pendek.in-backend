@@ -1,0 +1,29 @@
+{
+    "debug": true,
+    "application": {
+        "name": "PendekIn Backend API",
+        "version": "1.0.0",
+        "stage": "development"
+    },
+    "jwt_auth": {
+        "signing_key": "QWEWQEqweqweqweqw",
+        "expired_time_day": 30,
+        "issuer": "PendekIn API"
+    },
+    "server": {
+        "port": 8080,
+        "write_timeout": 10,
+        "read_timeout": 10
+    },
+    "database": {
+        "host": "localhost",
+        "port": 5432,
+        "user": "pendekin",
+        "password": "pendekin123456",
+        "db_name": "pendekin_db"
+    },
+    "log": {
+        "level": "debug",
+        "output": "app.log"
+    }
+}

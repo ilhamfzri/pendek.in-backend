@@ -1,17 +1,23 @@
 package domain
 
-import "time"
+import (
+	"time"
+
+	"gorm.io/gorm"
+)
 
 type User struct {
-	Id        int
-	Username  string
-	FirstName string
-	LastName  string
-	Bio       string
-	Email     string
-	Password  string
-	Verified  bool
-	LastLogin time.Time
-	CreatedAt time.Time
-	UpdatedAt time.Time
+	ID                string `gorm:"type:uuid;default:gen_random_uuid()"`
+	Username          string `gorm:"unique;index"`
+	FullName          string
+	Bio               string
+	Email             string `gorm:"unique;index;<-:create"`
+	Password          string
+	Verified          bool
+	ResetPasswordCode string
+	VerificationCode  string
+	LastLogin         time.Time
+	CreatedAt         time.Time
+	UpdatedAt         time.Time
+	DeletedAt         gorm.DeletedAt `gorm:"index"`
 }
