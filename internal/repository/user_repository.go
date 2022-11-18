@@ -30,12 +30,14 @@ func (repository *UserRepositoryImpl) FindByEmail(ctx context.Context, tx *gorm.
 }
 
 func (repository *UserRepositoryImpl) Update(ctx context.Context, tx *gorm.DB, user domain.User) (domain.User, error) {
-	result := tx.WithContext(ctx).Model(&domain.User{}).Updates(
-		domain.User{
-			Username: user.Username,
-			FullName: user.FullName,
-			Bio:      user.Bio,
-		})
+	result := tx.WithContext(ctx).Model(&domain.User{}).Where("id = ?", user.ID).
+		Updates(
+			domain.User{
+				FullName:  user.FullName,
+				Bio:       user.Bio,
+				LastLogin: user.LastLogin,
+				Verified:  user.Verified,
+			})
 
 	return user, result.Error
 }

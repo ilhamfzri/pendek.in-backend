@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"errors"
+	"time"
 
 	"github.com/ilhamfzri/pendek.in/app/logger"
 	"github.com/ilhamfzri/pendek.in/helper"
@@ -27,6 +28,7 @@ var (
 	ErrEmailNotVerified         = errors.New("email isn't verified")
 	ErrPasswordIncorrect        = errors.New("password incorrect")
 	ErrCurrentPasswordIncorrect = errors.New("current password incorrect")
+	ErrVerificationCodeInvalid  = errors.New("verification code expired or invalid")
 )
 
 func (service *UserServiceImpl) Register(ctx context.Context, request web.UserRegisterRequest) (web.UserResponse, error) {
@@ -113,6 +115,11 @@ func (service *UserServiceImpl) Login(ctx context.Context, request web.UserLogin
 	accessToken, validUntil, err := service.Jwt.NewToken(userData.ID, userData.Username, userData.Email)
 	service.Logger.PanicIfErr(err, ErrUserService)
 
+	// It's updating the last login time of the user.
+	userData.LastLogin = time.Now()
+	_, errRepo := service.Repository.Update(ctx, tx, userData)
+	service.Logger.PanicIfErr(errRepo, ErrUserService)
+
 	webResponse := web.TokenResponse{
 		AccessToken: accessToken,
 		ValidUntil:  validUntil,
@@ -145,4 +152,63 @@ func (service *UserServiceImpl) ChangePassword(ctx context.Context, request web.
 	service.Logger.PanicIfErr(errRepo, ErrUserService)
 
 	return nil
+}
+
+func (service *UserServiceImpl) Update(ctx context.Context, request web.UserUpdateRequest,
+	jwtToken string) (web.UserResponse, error) {
+
+	// It's getting the claims from the token.
+	claims := service.Jwt.GetClaims(jwtToken)
+
+	// It's a transaction.
+	tx := service.DB.Begin()
+	defer helper.CommitOrRollback(tx)
+
+	// It's getting the user data from the database.
+	user, errRepo := service.Repository.FindByEmail(ctx, tx, claims.Email)
+	service.Logger.PanicIfErr(errRepo, ErrUserService)
+
+	if request.FullName != "" {
+		user.FullName = request.FullName
+	}
+
+	if request.Bio != "" {
+		user.Bio = request.Bio
+	}
+
+	// It's updating the user data in the database.
+	user, errRepo = service.Repository.Update(ctx, tx, user)
+	service.Logger.PanicIfErr(errRepo, ErrUserService)
+
+	webResponse := helper.UserDomainToResponse(&user)
+	return webResponse, errRepo
+}
+
+func (service *UserServiceImpl) EmailVerification(ctx context.Context,
+	request web.UserEmailVerificationRequest) (web.UserResponse, error) {
+
+	// It's a transaction.
+	tx := service.DB.Begin()
+	defer helper.CommitOrRollback(tx)
+
+	// It's checking if the email is already registered or not.
+	userDomain, errRepo := service.Repository.FindByEmail(ctx, tx, request.Email)
+	if errors.Is(errRepo, gorm.ErrRecordNotFound) {
+		return web.UserResponse{}, ErrEmailNotFound
+	}
+
+	service.Logger.PanicIfErr(errRepo, ErrUserService)
+
+	// It's checking if the verification code is correct or not.
+	if request.VerificationCode != userDomain.VerificationCode {
+		return web.UserResponse{}, ErrVerificationCodeInvalid
+	}
+
+	// It's updating the user verification in the database.
+	userDomain.Verified = true
+	userDomain, errRepo = service.Repository.Update(ctx, tx, userDomain)
+	service.Logger.PanicIfErr(errRepo, ErrUserService)
+
+	userResponse := helper.UserDomainToResponse(&userDomain)
+	return userResponse, nil
 }

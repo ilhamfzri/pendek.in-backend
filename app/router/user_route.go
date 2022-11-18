@@ -20,6 +20,7 @@ func AddUsersRoute(server *Server, DB *gorm.DB, logger *logger.Logger, jwt *help
 	{
 		userRouteNotAuth.POST("/sign-up", userController.Register)
 		userRouteNotAuth.POST("/login", userController.Login)
+		userRouteNotAuth.POST("/email-verification", userController.EmailVerification)
 	}
 
 	jwtMiddleware := middleware.NewJwtMiddleware(jwt.SigningKey)
@@ -28,5 +29,6 @@ func AddUsersRoute(server *Server, DB *gorm.DB, logger *logger.Logger, jwt *help
 	userRouteAuth.Use(jwtMiddleware)
 	{
 		userRouteAuth.POST("/change-password", userController.ChangePassword)
+		userRouteAuth.PUT("/", userController.Update)
 	}
 }

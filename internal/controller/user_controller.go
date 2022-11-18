@@ -106,3 +106,59 @@ func (controller *UserControllerImpl) ChangePassword(c *gin.Context) {
 		c.JSON(http.StatusOK, webResponse)
 	}
 }
+
+func (controller *UserControllerImpl) Update(c *gin.Context) {
+	ctx := context.Background()
+	jwtToken := helper.ExtractTokenFromRequestHeader(c)
+
+	var request web.UserUpdateRequest
+	err := c.ShouldBindJSON(&request)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, helper.ToWebResponseFailed(err))
+		return
+	}
+
+	userResponse, errService := controller.Service.Update(ctx, request, jwtToken)
+
+	if errService != nil {
+		webResponse := web.WebResponseFailed{
+			Status:  "failed",
+			Message: errService.Error(),
+		}
+		c.JSON(http.StatusBadRequest, webResponse)
+	} else {
+		webResponse := web.WebResponseSuccess{
+			Status:  "success",
+			Message: "success update user info",
+			Data:    userResponse,
+		}
+		c.JSON(http.StatusCreated, webResponse)
+	}
+}
+
+func (controller *UserControllerImpl) EmailVerification(c *gin.Context) {
+	ctx := context.Background()
+	var request web.UserEmailVerificationRequest
+
+	err := c.ShouldBindJSON(&request)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, helper.ToWebResponseFailed(err))
+		return
+	}
+
+	userResponse, errService := controller.Service.EmailVerification(ctx, request)
+	if errService != nil {
+		webResponse := web.WebResponseFailed{
+			Status:  "failed",
+			Message: errService.Error(),
+		}
+		c.JSON(http.StatusBadRequest, webResponse)
+	} else {
+		webResponse := web.WebResponseSuccess{
+			Status:  "success",
+			Message: "successfully verified the email",
+			Data:    userResponse,
+		}
+		c.JSON(http.StatusCreated, webResponse)
+	}
+}
