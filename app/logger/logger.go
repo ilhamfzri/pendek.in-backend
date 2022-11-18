@@ -35,8 +35,6 @@ func NewLogger(cfg config.LoggerConfig) *Logger {
 		output = zerolog.MultiLevelWriter(os.Stderr, fileLogger)
 	}
 
-	// gitRevision := getGitRevision()
-
 	logger := zerolog.New(output).
 		Level(zerolog.Level(cfg.Level)).
 		With().
@@ -57,16 +55,13 @@ func (l *Logger) PanicIfErr(err error, message string) {
 	}
 }
 
-// func getGitRevision() string {
-// 	var gitRevision string
-// 	buildInfo, ok := debug.ReadBuildInfo()
-// 	if ok {
-// 		for _, v := range buildInfo.Settings {
-// 			if v.Key == "vcs.revision" {
-// 				gitRevision = v.Value
-// 				break
-// 			}
-// 		}
-// 	}
-// 	return gitRevision
+// func (l *Logger) LogRecovery(c *gin.Context) {
+// 	log := l.With().
+
+// 	// log.Error().
+// 	// 	Str("Full-Path", c.FullPath()).
+// 	// 	Str("Client IP", c.ClientIP()).
+// 	// 	Str("Authorization", strings.Join(c.Request.Header["Authorization"], "")).
+// 	// 	Str("Content-Type", c.ContentType()).
+// 	// 	Str("User-Agent", c.Request.UserAgent())
 // }

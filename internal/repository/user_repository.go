@@ -33,10 +33,11 @@ func (repository *UserRepositoryImpl) Update(ctx context.Context, tx *gorm.DB, u
 	result := tx.WithContext(ctx).Model(&domain.User{}).Where("id = ?", user.ID).
 		Updates(
 			domain.User{
-				FullName:  user.FullName,
-				Bio:       user.Bio,
-				LastLogin: user.LastLogin,
-				Verified:  user.Verified,
+				FullName:   user.FullName,
+				Bio:        user.Bio,
+				LastLogin:  user.LastLogin,
+				Verified:   user.Verified,
+				ProfilePic: user.ProfilePic,
 			})
 
 	return user, result.Error

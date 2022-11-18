@@ -8,4 +8,6 @@ type UserController interface {
 	ChangePassword(c *gin.Context)
 	Update(c *gin.Context)
 	EmailVerification(c *gin.Context)
+	GenerateToken(c *gin.Context)
+	ChangeProfilePicture(c *gin.Context)
 }

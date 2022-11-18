@@ -1,7 +1,9 @@
 package controller
 
 import (
+	"bytes"
 	"context"
+	"io"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -15,6 +17,8 @@ type UserControllerImpl struct {
 	Service service.UserService
 	Logger  *logger.Logger
 }
+
+var ErrUserController = "[UserController] Failed To Execute"
 
 func NewUserController(service service.UserService, logger *logger.Logger) UserController {
 	return &UserControllerImpl{
@@ -49,6 +53,8 @@ func (controller *UserControllerImpl) Register(c *gin.Context) {
 		}
 		c.JSON(http.StatusCreated, webResponse)
 	}
+
+	// TODO : integrate with email services to send verification code to user email
 }
 
 func (controller *UserControllerImpl) Login(c *gin.Context) {
@@ -160,5 +166,57 @@ func (controller *UserControllerImpl) EmailVerification(c *gin.Context) {
 			Data:    userResponse,
 		}
 		c.JSON(http.StatusCreated, webResponse)
+	}
+}
+
+func (controller *UserControllerImpl) GenerateToken(c *gin.Context) {
+	ctx := context.Background()
+	jwtToken := helper.ExtractTokenFromRequestHeader(c)
+
+	tokenResponse, errService := controller.Service.GenerateToken(ctx, jwtToken)
+
+	if errService != nil {
+		webResponse := web.WebResponseFailed{
+			Status:  "failed",
+			Message: errService.Error(),
+		}
+		c.JSON(http.StatusBadRequest, webResponse)
+	} else {
+		webResponse := web.WebResponseSuccess{
+			Status:  "success",
+			Message: "success create new request token",
+			Data:    tokenResponse,
+		}
+		c.JSON(http.StatusOK, webResponse)
+	}
+
+}
+
+func (controller *UserControllerImpl) ChangeProfilePicture(c *gin.Context) {
+	ctx := context.Background()
+	file, _, err := c.Request.FormFile("image_data")
+	controller.Logger.PanicIfErr(err, ErrUserController)
+	defer file.Close()
+
+	jwtToken := helper.ExtractTokenFromRequestHeader(c)
+
+	buf := bytes.NewBuffer(nil)
+	_, err = io.Copy(buf, file)
+	controller.Logger.PanicIfErr(err, ErrUserController)
+
+	errService := controller.Service.ChangeProfilePicture(ctx, buf.Bytes(), jwtToken)
+
+	if errService != nil {
+		webResponse := web.WebResponseFailed{
+			Status:  "failed",
+			Message: errService.Error(),
+		}
+		c.JSON(http.StatusBadRequest, webResponse)
+	} else {
+		webResponse := web.WebResponseSuccess{
+			Status:  "success",
+			Message: "success change profile picture",
+		}
+		c.JSON(http.StatusOK, webResponse)
 	}
 }

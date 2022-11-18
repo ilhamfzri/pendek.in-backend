@@ -1,15 +1,23 @@
 package service
 
 import (
+	"bytes"
 	"context"
 	"errors"
+	"fmt"
+	"image"
+	"image/jpeg"
+	"os"
+	"path"
 	"time"
 
+	"github.com/google/uuid"
 	"github.com/ilhamfzri/pendek.in/app/logger"
 	"github.com/ilhamfzri/pendek.in/helper"
 	"github.com/ilhamfzri/pendek.in/internal/model/domain"
 	"github.com/ilhamfzri/pendek.in/internal/model/web"
 	"github.com/ilhamfzri/pendek.in/internal/repository"
+	"github.com/nfnt/resize"
 	"gorm.io/gorm"
 )
 
@@ -211,4 +219,58 @@ func (service *UserServiceImpl) EmailVerification(ctx context.Context,
 
 	userResponse := helper.UserDomainToResponse(&userDomain)
 	return userResponse, nil
+}
+
+func (service *UserServiceImpl) GenerateToken(ctx context.Context, jwtToken string) (web.TokenResponse, error) {
+	// It's getting the claims from the token.
+	claims := service.Jwt.GetClaims(jwtToken)
+
+	// It's creating a new token and assign it to accessToken variable.
+	accessToken, validUntil, err := service.Jwt.NewToken(claims.Id, claims.Username, claims.Email)
+	service.Logger.PanicIfErr(err, ErrUserService)
+
+	webResponse := web.TokenResponse{
+		AccessToken: accessToken,
+		ValidUntil:  validUntil,
+	}
+
+	return webResponse, nil
+}
+
+func (service *UserServiceImpl) ChangeProfilePicture(ctx context.Context, imgByte []byte, jwtToken string) error {
+	// It's getting the claims from the token.
+	claims := service.Jwt.GetClaims(jwtToken)
+
+	// It's a transaction.
+	tx := service.DB.Begin()
+	defer helper.CommitOrRollback(tx)
+
+	// It's decoding the image from the byte array.
+	reader := bytes.NewReader(imgByte)
+	img, _, err := image.Decode(reader)
+	service.Logger.PanicIfErr(err, ErrUserService)
+
+	// It's resizing the image to 180x180 pixels.
+	resizeImg := resize.Resize(300, 300, img, resize.Lanczos3)
+
+	uuid := uuid.New().String()
+	fileName := fmt.Sprintf("%s.jpg", uuid)
+	userResourcePath := os.Getenv("PROFILE_IMG_DIR")
+	filePath := path.Join(userResourcePath, fileName)
+
+	out, err := os.Create(filePath)
+	service.Logger.PanicIfErr(err, ErrUserService)
+	defer out.Close()
+
+	jpeg.Encode(out, resizeImg, nil)
+
+	// It's checking if the email is already registered or not.
+	userDomain, errRepo := service.Repository.FindByEmail(ctx, tx, claims.Email)
+	service.Logger.PanicIfErr(errRepo, ErrUserService)
+
+	userDomain.ProfilePic = fileName
+	_, errRepo = service.Repository.Update(ctx, tx, userDomain)
+	service.Logger.PanicIfErr(errRepo, ErrUserService)
+
+	return nil
 }

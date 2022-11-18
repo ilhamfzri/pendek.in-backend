@@ -16,6 +16,7 @@ type User struct {
 	Verified          bool
 	ResetPasswordCode string
 	VerificationCode  string
+	ProfilePic        string
 	LastLogin         time.Time
 	CreatedAt         time.Time
 	UpdatedAt         time.Time

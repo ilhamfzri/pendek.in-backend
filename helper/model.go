@@ -7,10 +7,11 @@ import (
 
 func UserDomainToResponse(user *domain.User) web.UserResponse {
 	return web.UserResponse{
-		ID:       user.ID,
-		Username: user.Username,
-		FullName: user.FullName,
-		Bio:      user.Bio,
-		Email:    user.Email,
+		ID:         user.ID,
+		Username:   user.Username,
+		FullName:   user.FullName,
+		Bio:        user.Bio,
+		Email:      user.Email,
+		ProfilePic: user.ProfilePic,
 	}
 }

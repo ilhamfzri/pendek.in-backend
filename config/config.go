@@ -36,9 +36,10 @@ func (config *Config) GetDatabaseConfig() DatabaseConfig {
 }
 
 type ServerConfig struct {
-	Port         int `mapstructure:"port"`
-	WriteTimeout int `mapstructure:"write_timeout"`
-	ReadTimeout  int `mapstructure:"read_timeout"`
+	Port             int    `mapstructure:"port"`
+	WriteTimeout     int    `mapstructure:"write_timeout"`
+	ReadTimeout      int    `mapstructure:"read_timeout"`
+	ResourcesDirPath string `mapstructure:"resource_dir_path"`
 }
 
 func (config *Config) GetServerConfig() ServerConfig {

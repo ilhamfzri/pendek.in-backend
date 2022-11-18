@@ -3,6 +3,8 @@ package router
 import (
 	"fmt"
 	"net/http"
+	"os"
+	"path/filepath"
 	"strconv"
 	"time"
 
@@ -28,6 +30,13 @@ func NewServer(cfg config.ServerConfig) *Server {
 		ReadTimeout:  readTimeout * time.Second,
 		WriteTimeout: writeTimeout * time.Second,
 	}
+
+	// .- Initialize Resources Directories
+	os.MkdirAll(cfg.ResourcesDirPath, os.ModePerm)
+	userProfilePicturePath := filepath.Join(cfg.ResourcesDirPath, "profile_pic")
+	os.MkdirAll(userProfilePicturePath, os.ModePerm)
+
+	os.Setenv("PROFILE_IMG_DIR", userProfilePicturePath)
 
 	return &Server{
 		Server: server,

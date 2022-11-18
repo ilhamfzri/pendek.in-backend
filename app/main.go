@@ -9,6 +9,7 @@ import (
 	"github.com/ilhamfzri/pendek.in/app/router"
 	"github.com/ilhamfzri/pendek.in/config"
 	"github.com/ilhamfzri/pendek.in/helper"
+	"github.com/ilhamfzri/pendek.in/internal/handler"
 )
 
 func main() {
@@ -41,6 +42,18 @@ func main() {
 	//.- Jwt Initalize
 	jwtConfig := config.GetJwtConfig()
 	jwt := helper.NewJwt(jwtConfig)
+
+	//.- Recovery Handler
+	recoveryHandler := handler.NewRecoveryHandler(logger)
+	server.Router.Use(recoveryHandler)
+
+	//.- No Method Handler
+	noMethodHandler := handler.NewNoMethodHandler()
+	server.Router.NoMethod(noMethodHandler)
+
+	//.- No Route Handler
+	noRouteHandler := handler.NewNoRouteHandler()
+	server.Router.NoRoute(noRouteHandler)
 
 	//.- User Router Initalize
 	router.AddUsersRoute(server, db, logger, jwt)

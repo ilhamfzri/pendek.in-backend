@@ -13,7 +13,8 @@
     "server": {
         "port": 8080,
         "write_timeout": 10,
-        "read_timeout": 10
+        "read_timeout": 10,
+        "resource_dir_path": "resources"
     },
     "database": {
         "host": "localhost",

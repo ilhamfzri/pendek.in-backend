@@ -21,12 +21,14 @@ func NewJwtMiddleware(signingKey string) gin.HandlerFunc {
 		bearerToken := c.Request.Header["Authorization"]
 		if len(bearerToken) != 1 {
 			c.AbortWithStatusJSON(http.StatusBadRequest, helper.ToWebResponseFailed(ErrAuthNotFound))
+			return
 		}
 
 		// Checking if the token is in the correct format.
 		splitToken := strings.Split(bearerToken[0], "Bearer ")
 		if len(splitToken) != 2 {
 			c.AbortWithStatusJSON(http.StatusBadRequest, helper.ToWebResponseFailed(ErrInvalidBearerToken))
+			return
 		}
 
 		// Checking if the token is valid or not.
@@ -34,8 +36,10 @@ func NewJwtMiddleware(signingKey string) gin.HandlerFunc {
 		token, errJwtParse := jwt.Parse(jwtToken, func(token *jwt.Token) (interface{}, error) {
 			return []byte(signingKey), nil
 		})
-		if errJwtParse == jwt.ErrSignatureInvalid || !token.Valid {
+
+		if errJwtParse != nil || !token.Valid {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, helper.ToWebResponseFailed(ErrInvalidOrExpiredToken))
+			return
 		}
 
 		c.Next()
