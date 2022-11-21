@@ -25,7 +25,16 @@ type UserServiceImpl struct {
 	Repository repository.UserRepository
 	DB         *gorm.DB
 	Logger     *logger.Logger
-	Jwt        *helper.Jwt
+	Jwt        helper.IJwt
+}
+
+func NewUserService(repository repository.UserRepository, DB *gorm.DB, logger *logger.Logger, jwt helper.IJwt) UserService {
+	return &UserServiceImpl{
+		Repository: repository,
+		DB:         DB,
+		Logger:     logger,
+		Jwt:        jwt,
+	}
 }
 
 var (

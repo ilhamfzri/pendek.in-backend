@@ -7,13 +7,19 @@ import (
 	"github.com/ilhamfzri/pendek.in/config"
 )
 
+type IJwt interface {
+	GetClaims(jwtToken string) JwtUserClaims
+	NewToken(id string, username string, email string) (string, time.Time, error)
+	GetSigningKey() string
+}
+
 type Jwt struct {
 	SigningKey     string
 	ExpiredTimeDay int
 	Issuer         string
 }
 
-func NewJwt(cfg config.JwtConfig) *Jwt {
+func NewJwt(cfg config.JwtConfig) IJwt {
 	return &Jwt{
 		SigningKey:     cfg.SigningKey,
 		ExpiredTimeDay: cfg.ExpiredTimeDay,
@@ -51,4 +57,8 @@ func (jwtClient *Jwt) NewToken(id string, username string, email string) (string
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwtClaims)
 	key, err := token.SignedString([]byte(jwtClient.SigningKey))
 	return key, expiredTime, err
+}
+
+func (jwtClient *Jwt) GetSigningKey() string {
+	return jwtClient.SigningKey
 }

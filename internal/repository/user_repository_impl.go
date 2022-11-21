@@ -12,6 +12,12 @@ type UserRepositoryImpl struct {
 	Log *logger.Logger
 }
 
+func NewUserRepository(log *logger.Logger) UserRepository {
+	return &UserRepositoryImpl{
+		Log: log,
+	}
+}
+
 func (repository *UserRepositoryImpl) Create(ctx context.Context, tx *gorm.DB, user domain.User) (domain.User, error) {
 	result := tx.WithContext(ctx).Create(&user)
 	return user, result.Error

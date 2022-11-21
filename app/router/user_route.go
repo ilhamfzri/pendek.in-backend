@@ -16,7 +16,7 @@ import (
 	"gorm.io/gorm"
 )
 
-func AddUsersRoute(server *Server, DB *gorm.DB, logger *logger.Logger, jwt *helper.Jwt) {
+func AddUsersRoute(server *Server, DB *gorm.DB, logger *logger.Logger, jwt helper.IJwt) {
 
 	userRepository := repository.NewUserRepository(logger)
 	userService := service.NewUserService(userRepository, DB, logger, jwt)
@@ -29,7 +29,7 @@ func AddUsersRoute(server *Server, DB *gorm.DB, logger *logger.Logger, jwt *help
 		userRouteNotAuth.POST("/email-verification", userController.EmailVerification)
 	}
 
-	jwtMiddleware := middleware.NewJwtMiddleware(jwt.SigningKey)
+	jwtMiddleware := middleware.NewJwtMiddleware(jwt.GetSigningKey())
 	userRouteAuth := server.Router.Group("/v1/users")
 	userRouteAuth.Use(jwtMiddleware)
 	{
