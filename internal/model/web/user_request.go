@@ -1,24 +1,24 @@
 package web
 
 type UserRegisterRequest struct {
-	Username string `validate:"required,min=6,max=25" json:"username"`
-	Email    string `validate:"required,email,min=1,max=50" json:"email"`
-	Password string `validate:"required,min=6,max=16" json:"password"`
+	Username string `json:"username" binding:"required,min=6,max=25,alphanum"`
+	Email    string `json:"email" binding:"required,email,min=1,max=50"`
+	Password string `json:"password" binding:"required,min=6,max=16"`
 }
 
 type UserLoginRequest struct {
-	Email    string `validate:"required,email,min=1,max=50" json:"email"`
-	Password string `validate:"required,min=6,max=16" json:"password"`
+	Email    string `json:"email" binding:"required,email,min=1,max=50"`
+	Password string `json:"password" binding:"required,min=6,max=16"`
 }
 
 type UserEmailVerificationRequest struct {
-	Email            string `validate:"required,email,min=1,max=50" json:"email"`
-	VerificationCode string `validate:"required,min=1,max=6" json:"verification_code"`
+	Email            string `json:"email" binding:"required,email,min=1,max=50"`
+	VerificationCode string `json:"verification_code" binding:"required,min=1,max=6"`
 }
 
 type UserChangePasswordRequest struct {
-	CurrentPassword string `validate:"required,min=6,max=16" json:"current_password"`
-	NewPassword     string `validate:"required,min=6,max=16" json:"new_password"`
+	CurrentPassword string `json:"current_password" binding:"required,min=6,max=16"`
+	NewPassword     string `json:"new_password" binding:"required,min=6,max=16"`
 }
 
 type UserUpdateRequest struct {

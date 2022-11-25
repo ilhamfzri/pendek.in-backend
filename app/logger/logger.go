@@ -54,14 +54,3 @@ func (l *Logger) PanicIfErr(err error, message string) {
 		l.Panic().Err(err).Msg(message)
 	}
 }
-
-// func (l *Logger) LogRecovery(c *gin.Context) {
-// 	log := l.With().
-
-// 	// log.Error().
-// 	// 	Str("Full-Path", c.FullPath()).
-// 	// 	Str("Client IP", c.ClientIP()).
-// 	// 	Str("Authorization", strings.Join(c.Request.Header["Authorization"], "")).
-// 	// 	Str("Content-Type", c.ContentType()).
-// 	// 	Str("User-Agent", c.Request.UserAgent())
-// }

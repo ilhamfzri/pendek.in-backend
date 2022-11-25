@@ -61,7 +61,7 @@ func (service *UserServiceImpl) Register(ctx context.Context, request web.UserRe
 
 	// It's checking if the username is already used or not.
 	userData, repoErr := service.Repository.FindByUsername(ctx, tx, user.Username)
-	if (userData != domain.User{}) {
+	if repoErr == nil && userData.Username != "" {
 		return web.UserResponse{}, ErrUsernameFound
 	}
 
@@ -71,7 +71,7 @@ func (service *UserServiceImpl) Register(ctx context.Context, request web.UserRe
 
 	// It's checking if the email is already registered or not.
 	userData, repoErr = service.Repository.FindByEmail(ctx, tx, user.Email)
-	if (userData != domain.User{}) {
+	if repoErr == nil && userData.Email != "" {
 		return web.UserResponse{}, ErrEmailFound
 	}
 

@@ -17,6 +17,7 @@ type User struct {
 	ResetPasswordCode string
 	VerificationCode  string
 	ProfilePic        string
+	SocialMediaLinks  []SocialMediaLink `gorm:"foreignKey:UserID"`
 	LastLogin         time.Time
 	CreatedAt         time.Time
 	UpdatedAt         time.Time

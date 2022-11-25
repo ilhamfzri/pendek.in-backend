@@ -57,6 +57,7 @@ func main() {
 
 	//.- User Router Initalize
 	router.AddUsersRoute(server, db, logger, jwt)
+	router.AddSocialMediaRoute(server, db, logger, jwt)
 
 	//.- Run Server
 	server.Run()

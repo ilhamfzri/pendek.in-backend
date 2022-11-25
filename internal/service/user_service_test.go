@@ -78,7 +78,7 @@ func TestUserServiceRegister(t *testing.T) {
 
 			assert.Equal(t, web.UserResponse{}, user)
 			assert.NotNil(t, err)
-			assert.Equal(t, err, ErrUsernameFound)
+			assert.Equal(t, ErrUsernameFound, err)
 		},
 	)
 
@@ -94,7 +94,7 @@ func TestUserServiceRegister(t *testing.T) {
 
 			assert.Equal(t, web.UserResponse{}, user)
 			assert.NotNil(t, err)
-			assert.Equal(t, err, ErrEmailFound)
+			assert.Equal(t, ErrEmailFound, err)
 		},
 	)
 

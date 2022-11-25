@@ -15,3 +15,11 @@ type UserService interface {
 	GenerateToken(ctx context.Context, jwtToken string) (web.TokenResponse, error)
 	ChangeProfilePicture(ctx context.Context, imgByte []byte, jwtToken string) error
 }
+
+type SocialMediaLinkService interface {
+	GetAllTypes(ctx context.Context) ([]web.SocialMediaTypeResponse, error)
+	CreateLink(ctx context.Context, request web.SocialMediaLinkCreateRequest, jwtToken string) (web.SocialMediaLinkResponse, error)
+	UpdateLink(ctx context.Context, request web.SocialMediaLinkUpdateRequest, jwtToken string) (web.SocialMediaLinkResponse, error)
+	GetAllLink(ctx context.Context, domain string, jwtToken string) ([]web.SocialMediaLinkResponse, error)
+	RedirectLink(ctx context.Context, request web.SocialMediaLinkRedirectRequest) (string, error)
+}
