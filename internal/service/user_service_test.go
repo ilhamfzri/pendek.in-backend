@@ -10,7 +10,7 @@ import (
 	"github.com/ilhamfzri/pendek.in/helper"
 	"github.com/ilhamfzri/pendek.in/internal/model/domain"
 	"github.com/ilhamfzri/pendek.in/internal/model/web"
-	"github.com/ilhamfzri/pendek.in/internal/repository"
+	"github.com/ilhamfzri/pendek.in/internal/repository/mocks"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"gorm.io/gorm"
@@ -40,7 +40,7 @@ var userFound = domain.User{
 
 func TestUserServiceRegister(t *testing.T) {
 	var jwt = new(helper.JwtMock)
-	var userRepository = new(repository.UserRepositoryMock)
+	var userRepository = mocks.NewUserRepository(t)
 	var userService = NewUserService(userRepository, db, log, jwt)
 
 	userRepository.Mock.On("Create", mock.Anything, mock.Anything, mock.Anything).Return(userNotFound, nil)
@@ -103,7 +103,7 @@ func TestUserServiceRegister(t *testing.T) {
 
 func TestUserServiceLogin(t *testing.T) {
 	var jwt = new(helper.JwtMock)
-	var userRepository = new(repository.UserRepositoryMock)
+	var userRepository = mocks.NewUserRepository(t)
 	var userService = NewUserService(userRepository, db, log, jwt)
 
 	newUserFound := userFound
@@ -117,6 +117,12 @@ func TestUserServiceLogin(t *testing.T) {
 	userRepository.Mock.On("FindByEmail", mock.Anything, mock.Anything, userNotFound.Email).Return(domain.User{}, gorm.ErrRecordNotFound)
 	userRepository.Mock.On("FindByEmail", mock.Anything, mock.Anything, newUserFound.Email).Return(newUserFound, nil)
 	userRepository.Mock.On("FindByEmail", mock.Anything, mock.Anything, newUserFoundVerified.Email).Return(newUserFoundVerified, nil)
+	userRepository.Mock.On("Update", mock.Anything, mock.Anything, mock.AnythingOfType("domain.User")).Return(
+		func(ctx context.Context, tx *gorm.DB, user domain.User) domain.User {
+			return user
+		}, func(ctx context.Context, tx *gorm.DB, user domain.User) error {
+			return nil
+		})
 
 	jwt.Mock.On("NewToken", mock.Anything, mock.Anything, mock.Anything).Return("SIxTHeN2csRDv.WqW2H5M.0pDPli7p1OAsikanREUi2B5tt", time.Now(), nil)
 
@@ -165,12 +171,12 @@ func TestUserServiceLogin(t *testing.T) {
 		assert.IsType(t, token, web.TokenResponse{})
 	})
 
-	userRepository.AssertExpectations(t)
+	// userRepository.AssertExpectations(t)
 }
 
 func TestUserChangePassword(t *testing.T) {
 	var jwt = new(helper.JwtMock)
-	var userRepository = new(repository.UserRepositoryMock)
+	var userRepository = mocks.NewUserRepository(t)
 	var userService = NewUserService(userRepository, db, log, jwt)
 
 	newUserFound := userFound
@@ -212,7 +218,7 @@ func TestUserChangePassword(t *testing.T) {
 
 func TestUserEmailVerification(t *testing.T) {
 	var jwt = new(helper.JwtMock)
-	var userRepository = new(repository.UserRepositoryMock)
+	var userRepository = mocks.NewUserRepository(t)
 	var userService = NewUserService(userRepository, db, log, jwt)
 
 	var newUserFound = userFound
