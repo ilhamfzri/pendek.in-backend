@@ -5,8 +5,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ilhamfzri/pendek.in/app/database"
-	"github.com/ilhamfzri/pendek.in/app/logger"
 	"github.com/ilhamfzri/pendek.in/helper"
 	"github.com/ilhamfzri/pendek.in/internal/model/domain"
 	"github.com/ilhamfzri/pendek.in/internal/model/web"
@@ -15,14 +13,6 @@ import (
 	"github.com/stretchr/testify/mock"
 	"gorm.io/gorm"
 )
-
-var ctx = context.Background()
-var db = database.NewDatabaseConnectionMock()
-var log = new(logger.Logger)
-
-func TestMain(m *testing.M) {
-	m.Run()
-}
 
 var userNotFound = domain.User{
 	Username: "testuser01",
