@@ -15,3 +15,13 @@ func UserDomainToResponse(user *domain.User) web.UserResponse {
 		ProfilePic: user.ProfilePic,
 	}
 }
+
+func SocialMediaLinkDomainToResponse(smld *domain.SocialMediaLink, host string, username string) web.SocialMediaLinkResponse {
+	return web.SocialMediaLinkResponse{
+		TypeID:          smld.TypeID,
+		SocialMediaName: smld.SocialMediaType.Name,
+		LinkOrUsername:  smld.LinkOrUsername,
+		Activate:        smld.Activate,
+		RedirectLink:    GenerateRedirectLink(host, username, smld.SocialMediaType.Name),
+	}
+}

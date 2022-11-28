@@ -2,7 +2,6 @@ package controller
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -27,12 +26,13 @@ func NewSocialMediaLink(service service.SocialMediaLinkService, logger *logger.L
 func (controller *SocialMediaLinkControllerImpl) GetAllTypes(c *gin.Context) {
 	ctx := context.Background()
 	socialMediaTypesResponse, errService := controller.Service.GetAllTypes(ctx)
+
 	if errService != nil {
 		webResponse := web.WebResponseFailed{
 			Status:  "failed",
 			Message: errService.Error(),
 		}
-		c.JSON(http.StatusBadRequest, webResponse)
+		c.JSON(http.StatusInternalServerError, webResponse)
 	} else {
 		webResponse := web.WebResponseSuccess{
 			Status:  "success",
@@ -45,8 +45,9 @@ func (controller *SocialMediaLinkControllerImpl) GetAllTypes(c *gin.Context) {
 
 func (controller *SocialMediaLinkControllerImpl) CreateLink(c *gin.Context) {
 	ctx := context.Background()
-
+	host := c.Request.Host
 	jwtToken := helper.ExtractTokenFromRequestHeader(c)
+
 	var request web.SocialMediaLinkCreateRequest
 	err := c.ShouldBindJSON(&request)
 	if err != nil {
@@ -54,7 +55,7 @@ func (controller *SocialMediaLinkControllerImpl) CreateLink(c *gin.Context) {
 		return
 	}
 
-	socialMediaLinkResponse, errService := controller.Service.CreateLink(ctx, request, jwtToken)
+	socialMediaLinkResponse, errService := controller.Service.CreateLink(ctx, request, host, jwtToken)
 
 	if errService != nil {
 		webResponse := web.WebResponseFailed{
@@ -74,6 +75,7 @@ func (controller *SocialMediaLinkControllerImpl) CreateLink(c *gin.Context) {
 
 func (controller *SocialMediaLinkControllerImpl) UpdateLink(c *gin.Context) {
 	ctx := context.Background()
+	host := c.Request.Host
 	jwtToken := helper.ExtractTokenFromRequestHeader(c)
 	var request web.SocialMediaLinkUpdateRequest
 
@@ -89,9 +91,8 @@ func (controller *SocialMediaLinkControllerImpl) UpdateLink(c *gin.Context) {
 		return
 	}
 
-	fmt.Println(request)
+	socialMediaLinkResponse, errService := controller.Service.UpdateLink(ctx, request, host, jwtToken)
 
-	socialMediaLinkResponse, errService := controller.Service.UpdateLink(ctx, request, jwtToken)
 	if errService != nil {
 		webResponse := web.WebResponseFailed{
 			Status:  "failed",
@@ -111,9 +112,9 @@ func (controller *SocialMediaLinkControllerImpl) UpdateLink(c *gin.Context) {
 func (controller *SocialMediaLinkControllerImpl) GetAllLink(c *gin.Context) {
 	ctx := context.Background()
 	jwtToken := helper.ExtractTokenFromRequestHeader(c)
-	domain := c.Request.Host
+	host := c.Request.Host
 
-	socialMediaTypesResponse, errService := controller.Service.GetAllLink(ctx, domain, jwtToken)
+	socialMediaTypesResponse, errService := controller.Service.GetAllLink(ctx, host, jwtToken)
 	if errService != nil {
 		webResponse := web.WebResponseFailed{
 			Status:  "failed",
@@ -133,6 +134,7 @@ func (controller *SocialMediaLinkControllerImpl) GetAllLink(c *gin.Context) {
 func (controller *SocialMediaLinkControllerImpl) RedirectLink(c *gin.Context) {
 	ctx := context.Background()
 	var request web.SocialMediaLinkRedirectRequest
+
 	err := c.ShouldBindUri(&request)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusBadRequest, helper.ToWebResponseFailed(err))

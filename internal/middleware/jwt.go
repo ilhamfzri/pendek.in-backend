@@ -41,7 +41,6 @@ func NewJwtMiddleware(signingKey string) gin.HandlerFunc {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, helper.ToWebResponseFailed(ErrInvalidOrExpiredToken))
 			return
 		}
-
 		c.Next()
 	}
 }

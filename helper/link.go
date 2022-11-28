@@ -3,11 +3,15 @@ package helper
 import (
 	"fmt"
 	"strings"
+
+	"github.com/go-playground/validator/v10"
 )
 
-func GenerateRedirectLink(domain string, username string, socialMediaName string) string {
+var validate *validator.Validate
+
+func GenerateRedirectLink(host string, username string, socialMediaName string) string {
 	socialMediaUrl := SocialMediaNameToUrlFormat(socialMediaName)
-	redirectLink := fmt.Sprintf("%s/%s/%s", domain, username, socialMediaUrl)
+	redirectLink := fmt.Sprintf("%s/%s/%s", host, username, socialMediaUrl)
 	return redirectLink
 }
 
@@ -27,4 +31,33 @@ func SocialMediaUrlToNameFormat(socialMediaUrl string) string {
 	default:
 		return strings.Title(url)
 	}
+}
+
+func SocialMediaValidator(socialMediaName string, link_or_username string) bool {
+	var err error
+	validate = validator.New()
+	switch socialMediaName {
+	case "Tiktok", "Twitter", "Instagram":
+		err = validate.Var(link_or_username, "alphanum")
+	case "Whatsapp":
+		err = validate.Var(link_or_username, "e164")
+	default:
+		err = validate.Var(link_or_username, "url")
+	}
+	return err == nil
+
+}
+
+func GenerateLinkResponse(socialMediaName string, link_or_username string) string {
+	var linkResponse string
+	switch socialMediaName {
+	case "Tiktok", "Twitter", "Instagram":
+		linkResponse = fmt.Sprintf("https://www.%s.com/%s", strings.ToLower(socialMediaName), link_or_username)
+	case "Whatsapp":
+		linkResponse = fmt.Sprintf("https://wa.me/%s", link_or_username)
+	default:
+		linkResponse = link_or_username
+	}
+	fmt.Println(linkResponse)
+	return linkResponse
 }

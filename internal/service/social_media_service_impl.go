@@ -23,11 +23,12 @@ type SocialMediaLinkServiceImpl struct {
 }
 
 var (
-	ErrSocialMediaLinkService  = "[Social Media Link Service] Failed Execute Social Media Link Service"
-	ErrSocialMediaLinkFound    = errors.New("social media link is registered, please use update instead")
-	ErrSocialMediaLinkNotFound = errors.New("social media link is not registered, please use post instead")
-	ErrSocialMediaTypeInvalid  = errors.New("social media type id invalid")
-	ErrSocialMediaInvalidLink  = errors.New("invalid link")
+	ErrSocialMediaLinkService        = "[Social Media Link Service] Failed Execute Social Media Link Service"
+	ErrSocialMediaLinkFound          = errors.New("social media link is registered, please use update instead")
+	ErrSocialMediaLinkNotFound       = errors.New("social media link is not registered, please use post instead")
+	ErrSocialMediaTypeInvalid        = errors.New("social media type id invalid")
+	ErrSocialMediaInvalidLink        = errors.New("invalid link")
+	ErrSocialMediaLinkUsernameOrLink = errors.New("username or link format is not valid")
 )
 
 func NewSocialMediaLinkService(userRepository repository.UserRepository, socialMediaLinkRepository repository.SocialMediaLinkRepository, socialMediaTypeRepository repository.SocialMediaTypeRepository, DB *gorm.DB, logger *logger.Logger, jwt helper.IJwt) SocialMediaLinkService {
@@ -46,6 +47,7 @@ func (service *SocialMediaLinkServiceImpl) GetAllTypes(ctx context.Context) ([]w
 	tx := service.DB.Begin()
 	defer helper.CommitOrRollback(tx)
 
+	// It's getting all social media type data from the database.
 	socialMediaTypes, repoErr := service.SocialMediaTypeRepository.FetchAll(ctx, tx)
 	service.Logger.PanicIfErr(repoErr, ErrSocialMediaLinkService)
 
@@ -62,7 +64,7 @@ func (service *SocialMediaLinkServiceImpl) GetAllTypes(ctx context.Context) ([]w
 	return webResponse, nil
 }
 
-func (service *SocialMediaLinkServiceImpl) CreateLink(ctx context.Context, request web.SocialMediaLinkCreateRequest, jwtToken string) (web.SocialMediaLinkResponse, error) {
+func (service *SocialMediaLinkServiceImpl) CreateLink(ctx context.Context, request web.SocialMediaLinkCreateRequest, host string, jwtToken string) (web.SocialMediaLinkResponse, error) {
 	// It's getting the claims from the token.
 	claims := service.Jwt.GetClaims(jwtToken)
 
@@ -70,13 +72,19 @@ func (service *SocialMediaLinkServiceImpl) CreateLink(ctx context.Context, reque
 	tx := service.DB.Begin()
 	defer helper.CommitOrRollback(tx)
 
+	// It's checking if the social media type id is valid or not.
 	socialMediaType, repoErr := service.SocialMediaTypeRepository.FindByID(ctx, tx, request.TypeID)
 	if repoErr != nil && errors.Is(repoErr, gorm.ErrRecordNotFound) {
 		return web.SocialMediaLinkResponse{}, ErrSocialMediaTypeInvalid
 	}
-
 	service.Logger.PanicIfErr(repoErr, ErrSocialMediaLinkService)
 
+	// It's checking if the social media link or username is valid or not.
+	if !helper.SocialMediaValidator(socialMediaType.Name, request.LinkOrUsername) {
+		return web.SocialMediaLinkResponse{}, ErrSocialMediaLinkUsernameOrLink
+	}
+
+	// It's checking if the social media link is registered or not.
 	socialMediaLink, repoErr := service.SocialMediaLinkRepository.FindByTypeAndUserID(ctx, tx, uint(request.TypeID), claims.Id)
 	if repoErr == nil && socialMediaLink.ID != 0 {
 		return web.SocialMediaLinkResponse{}, ErrSocialMediaLinkFound
@@ -86,8 +94,6 @@ func (service *SocialMediaLinkServiceImpl) CreateLink(ctx context.Context, reque
 		service.Logger.PanicIfErr(repoErr, ErrSocialMediaLinkService)
 	}
 
-	// TODO : Add preprocessing for Tiktok, Twitter, Instagram, Whatsapp
-
 	socialMediaLinkData := domain.SocialMediaLink{
 		TypeID:         uint(request.TypeID),
 		UserID:         claims.Id,
@@ -95,19 +101,16 @@ func (service *SocialMediaLinkServiceImpl) CreateLink(ctx context.Context, reque
 		Activate:       true,
 	}
 
+	// It's creating a new social media link data.
 	socialMediaLink, repoErr = service.SocialMediaLinkRepository.Create(ctx, tx, socialMediaLinkData)
+	socialMediaLink.SocialMediaType = socialMediaType
 	service.Logger.PanicIfErr(repoErr, ErrSocialMediaLinkService)
 
-	webResponse := web.SocialMediaLinkResponse{
-		TypeID:          socialMediaType.ID,
-		SocialMediaName: socialMediaType.Name,
-		LinkOrUsername:  socialMediaLink.LinkOrUsername,
-		Activate:        socialMediaLink.Activate,
-	}
-	return webResponse, nil
+	socialMediaLinkResponse := helper.SocialMediaLinkDomainToResponse(&socialMediaLink, host, claims.Username)
+	return socialMediaLinkResponse, nil
 }
 
-func (service *SocialMediaLinkServiceImpl) UpdateLink(ctx context.Context, request web.SocialMediaLinkUpdateRequest, jwtToken string) (web.SocialMediaLinkResponse, error) {
+func (service *SocialMediaLinkServiceImpl) UpdateLink(ctx context.Context, request web.SocialMediaLinkUpdateRequest, host string, jwtToken string) (web.SocialMediaLinkResponse, error) {
 	// It's getting the claims from the token.
 	claims := service.Jwt.GetClaims(jwtToken)
 
@@ -115,19 +118,26 @@ func (service *SocialMediaLinkServiceImpl) UpdateLink(ctx context.Context, reque
 	tx := service.DB.Begin()
 	defer helper.CommitOrRollback(tx)
 
-	socialMediaType, repoErr := service.SocialMediaTypeRepository.FindByID(ctx, tx, request.TypeID)
+	// It's checking if the social media type id is valid or not.
+	_, repoErr := service.SocialMediaTypeRepository.FindByID(ctx, tx, request.TypeID)
 	if repoErr != nil && errors.Is(repoErr, gorm.ErrRecordNotFound) {
 		return web.SocialMediaLinkResponse{}, ErrSocialMediaTypeInvalid
 	}
 	service.Logger.PanicIfErr(repoErr, ErrSocialMediaLinkService)
 
+	// It's checking if the social media link is registered or not.
 	socialMediaLink, repoErr := service.SocialMediaLinkRepository.FindByTypeAndUserID(ctx, tx, uint(request.TypeID), claims.Id)
-
 	if repoErr != nil && errors.Is(repoErr, gorm.ErrRecordNotFound) {
 		return web.SocialMediaLinkResponse{}, ErrSocialMediaLinkNotFound
 	}
 	service.Logger.PanicIfErr(repoErr, ErrSocialMediaLinkService)
 
+	if !helper.SocialMediaValidator(socialMediaLink.SocialMediaType.Name, request.NewLinkOrUsername) {
+		return web.SocialMediaLinkResponse{}, ErrSocialMediaLinkUsernameOrLink
+	}
+
+	// It's checking if the request has a new link or username and activate value. If it has, it will
+	// update the value.
 	if request.NewLinkOrUsername != "" {
 		socialMediaLink.LinkOrUsername = request.NewLinkOrUsername
 	}
@@ -136,20 +146,16 @@ func (service *SocialMediaLinkServiceImpl) UpdateLink(ctx context.Context, reque
 		socialMediaLink.Activate = *request.Activate
 	}
 
+	// It's updating the social media link data.
+	fmt.Println(socialMediaLink)
 	socialMediaLink, repoErr = service.SocialMediaLinkRepository.Update(ctx, tx, socialMediaLink)
 	service.Logger.PanicIfErr(repoErr, ErrSocialMediaLinkService)
-
-	webResponse := web.SocialMediaLinkResponse{
-		TypeID:          socialMediaType.ID,
-		SocialMediaName: socialMediaType.Name,
-		LinkOrUsername:  socialMediaLink.LinkOrUsername,
-		Activate:        socialMediaLink.Activate,
-	}
-
-	return webResponse, nil
+	fmt.Println("Here")
+	socialMediaLinkResponse := helper.SocialMediaLinkDomainToResponse(&socialMediaLink, host, claims.Username)
+	return socialMediaLinkResponse, nil
 }
 
-func (service *SocialMediaLinkServiceImpl) GetAllLink(ctx context.Context, domain string, jwtToken string) ([]web.SocialMediaLinkResponse, error) {
+func (service *SocialMediaLinkServiceImpl) GetAllLink(ctx context.Context, host string, jwtToken string) ([]web.SocialMediaLinkResponse, error) {
 	// It's getting the claims from the token.
 	claims := service.Jwt.GetClaims(jwtToken)
 
@@ -157,28 +163,25 @@ func (service *SocialMediaLinkServiceImpl) GetAllLink(ctx context.Context, domai
 	tx := service.DB.Begin()
 	defer helper.CommitOrRollback(tx)
 
+	// It's getting all social media link data from the database.
 	socialMediaLinks, repoErr := service.SocialMediaLinkRepository.FindByUserID(ctx, tx, claims.Id)
 	service.Logger.PanicIfErr(repoErr, ErrSocialMediaLinkService)
 
-	var webResponse []web.SocialMediaLinkResponse
+	var socialMediaLinksReponse []web.SocialMediaLinkResponse
 	for _, socialMediaLink := range socialMediaLinks {
-		entry := web.SocialMediaLinkResponse{
-			TypeID:          socialMediaLink.TypeID,
-			SocialMediaName: socialMediaLink.SocialMediaType.Name,
-			LinkOrUsername:  socialMediaLink.LinkOrUsername,
-			RedirectLink:    helper.GenerateRedirectLink(domain, claims.Username, socialMediaLink.SocialMediaType.Name),
-			Activate:        socialMediaLink.Activate,
-		}
-		webResponse = append(webResponse, entry)
+		socialMediaLinkReponse := helper.SocialMediaLinkDomainToResponse(&socialMediaLink, host, claims.Username)
+		socialMediaLinksReponse = append(socialMediaLinksReponse, socialMediaLinkReponse)
 	}
 
-	return webResponse, nil
+	return socialMediaLinksReponse, nil
 }
 
 func (service *SocialMediaLinkServiceImpl) RedirectLink(ctx context.Context, request web.SocialMediaLinkRedirectRequest) (string, error) {
 	// It's a transaction.
 	tx := service.DB.Begin()
 	defer helper.CommitOrRollback(tx)
+
+	// It's checking if the social media name is valid or not.
 	socialMediaName := helper.SocialMediaUrlToNameFormat(request.SocialMediaName)
 	socialMediaType, repoErr := service.SocialMediaTypeRepository.FindByName(ctx, tx, socialMediaName)
 	if repoErr != nil && errors.Is(repoErr, gorm.ErrRecordNotFound) {
@@ -186,18 +189,20 @@ func (service *SocialMediaLinkServiceImpl) RedirectLink(ctx context.Context, req
 	}
 	service.Logger.PanicIfErr(repoErr, ErrSocialMediaLinkService)
 
+	// It's checking if the username is valid or not.
 	userData, repoErr := service.UserRepository.FindByUsername(ctx, tx, request.Username)
 	if repoErr != nil && errors.Is(repoErr, gorm.ErrRecordNotFound) {
 		return "", ErrSocialMediaInvalidLink
 	}
 	service.Logger.PanicIfErr(repoErr, ErrSocialMediaLinkService)
 
+	// It's checking if the social media link is registered or not.
 	socialMediaLink, repoErr := service.SocialMediaLinkRepository.FindByTypeAndUserID(ctx, tx, socialMediaType.ID, userData.ID)
-	fmt.Println(socialMediaLink.Activate)
 	if (repoErr != nil && errors.Is(repoErr, gorm.ErrRecordNotFound)) || !socialMediaLink.Activate {
 		return "", ErrSocialMediaInvalidLink
 	}
 	service.Logger.PanicIfErr(repoErr, ErrSocialMediaLinkService)
 
-	return socialMediaLink.LinkOrUsername, nil
+	linkResponse := helper.GenerateLinkResponse(socialMediaLink.SocialMediaType.Name, socialMediaLink.LinkOrUsername)
+	return linkResponse, nil
 }
