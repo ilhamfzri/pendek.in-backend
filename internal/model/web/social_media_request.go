@@ -25,6 +25,7 @@ type SocialMediaAnalyticInteractionRequest struct {
 }
 
 type SocialMediaAnalyticGetRequest struct {
-	TypeID   int       `form:"type_id" binding:"required"`
-	Datetime time.Time `form:"datetime" binding:"required" time_format:"2006-01-02"`
+	TypeID    int       `form:"type_id" binding:"required"`
+	StartDate time.Time `form:"start_date" binding:"required" time_format:"2006-01-02"`
+	EndDate   time.Time `form:"end_date" binding:"required" time_format:"2006-01-02"`
 }

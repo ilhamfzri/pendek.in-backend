@@ -26,5 +26,6 @@ type SocialMediaLinkService interface {
 
 type SocialMediaAnalytic interface {
 	SaveInteraction(ctx context.Context, request web.SocialMediaAnalyticInteractionRequest) error
-	GetLinkAnalytic(ctx context.Context, request web.SocialMediaAnalyticGetRequest, jwtToken string) (web.SocialMediaAnalyticResponse, error)
+	GetLinkAnalytic(ctx context.Context, request web.SocialMediaAnalyticGetRequest, jwtToken string) ([]web.SocialMediaAnalyticResponse, error)
+	GetSummaryLinkAnalytic(ctx context.Context, jwtToken string) (web.SocialMediaAnalyticSummaryResponse, error)
 }

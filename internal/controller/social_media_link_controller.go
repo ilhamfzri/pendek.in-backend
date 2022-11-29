@@ -194,3 +194,26 @@ func (controller *SocialMediaLinkControllerImpl) GetLinkAnalytic(c *gin.Context)
 	}
 
 }
+
+func (controller *SocialMediaLinkControllerImpl) GetSummaryLinkAnalytic(c *gin.Context) {
+	ctx := context.Background()
+	jwtToken := helper.ExtractTokenFromRequestHeader(c)
+
+	socialMediaAnalyticSummaryResponse, errService := controller.AnalyticService.GetSummaryLinkAnalytic(ctx, jwtToken)
+
+	if errService != nil {
+		webResponse := web.WebResponseFailed{
+			Status:  "failed",
+			Message: errService.Error(),
+		}
+		c.JSON(http.StatusBadRequest, webResponse)
+	} else {
+		webResponse := web.WebResponseSuccess{
+			Status:  "success",
+			Message: "success get social media link analytic summary",
+			Data:    socialMediaAnalyticSummaryResponse,
+		}
+		c.JSON(http.StatusOK, webResponse)
+	}
+
+}

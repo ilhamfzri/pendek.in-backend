@@ -27,6 +27,18 @@ type SocialMediaAnalyticResponse struct {
 	LastUpdated       time.Time              `json:"last_updated"`
 }
 
+type TotalSocialMediaAnalyticResponse struct {
+	SocialMediaName string `json:"name"`
+	TotalClickCount int    `json:"total_click_count"`
+	TotalViewCount  int    `json:"total_view_count"`
+}
+
+type SocialMediaAnalyticSummaryResponse struct {
+	SocialMedia    []TotalSocialMediaAnalyticResponse `json:"social_media"`
+	DeviceAnalytic DeviceAnalyticResponse             `json:"device_analytic"`
+	LastUpdated    time.Time                          `json:"last_updated"`
+}
+
 type DeviceAnalyticResponse struct {
 	Mobile  int `json:"mobile"`
 	Tablet  int `json:"tablet"`

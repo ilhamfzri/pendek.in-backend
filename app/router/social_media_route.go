@@ -32,6 +32,7 @@ func AddSocialMediaRoute(server *Server, DB *gorm.DB, logger *logger.Logger, jwt
 		socialMediaRouteAuth.PUT("/:type_id", socialMediaLinkController.UpdateLink)
 		socialMediaRouteAuth.GET("/", socialMediaLinkController.GetAllLink)
 		socialMediaRouteAuth.GET("/analytic", socialMediaLinkController.GetLinkAnalytic)
+		socialMediaRouteAuth.GET("/analytic/summary", socialMediaLinkController.GetSummaryLinkAnalytic)
 	}
 
 	socialMediaRoute := server.Router.Group("")
