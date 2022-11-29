@@ -12,14 +12,16 @@ import (
 )
 
 type SocialMediaLinkControllerImpl struct {
-	Service service.SocialMediaLinkService
-	Logger  *logger.Logger
+	Service         service.SocialMediaLinkService
+	AnalyticService service.SocialMediaAnalytic
+	Logger          *logger.Logger
 }
 
-func NewSocialMediaLink(service service.SocialMediaLinkService, logger *logger.Logger) SocialMediaLinkController {
+func NewSocialMediaLink(service service.SocialMediaLinkService, analyticService service.SocialMediaAnalytic, logger *logger.Logger) SocialMediaLinkController {
 	return &SocialMediaLinkControllerImpl{
-		Service: service,
-		Logger:  logger,
+		Service:         service,
+		AnalyticService: analyticService,
+		Logger:          logger,
 	}
 }
 
@@ -140,7 +142,16 @@ func (controller *SocialMediaLinkControllerImpl) RedirectLink(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusBadRequest, helper.ToWebResponseFailed(err))
 		return
 	}
-	redirectLink, errService := controller.Service.RedirectLink(ctx, request)
+	redirectLink, socialMediaLinkID, errService := controller.Service.RedirectLink(ctx, request)
+
+	if errService == nil {
+		requstSaveInteraction := web.SocialMediaAnalyticInteractionRequest{
+			ClientIP:          c.ClientIP(),
+			UserAgent:         c.Request.Header.Get("User-Agent"),
+			SocialMediaLinkID: socialMediaLinkID,
+		}
+		_ = controller.AnalyticService.SaveInteraction(ctx, requstSaveInteraction)
+	}
 
 	if errService != nil {
 		webResponse := web.WebResponseFailed{
@@ -150,6 +161,36 @@ func (controller *SocialMediaLinkControllerImpl) RedirectLink(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, webResponse)
 	} else {
 		c.Redirect(http.StatusFound, redirectLink)
+	}
+
+}
+
+func (controller *SocialMediaLinkControllerImpl) GetLinkAnalytic(c *gin.Context) {
+	ctx := context.Background()
+	jwtToken := helper.ExtractTokenFromRequestHeader(c)
+	var request web.SocialMediaAnalyticGetRequest
+
+	err := c.ShouldBindQuery(&request)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, helper.ToWebResponseFailed(err))
+		return
+	}
+
+	socialMediaAnalyticResponse, errService := controller.AnalyticService.GetLinkAnalytic(ctx, request, jwtToken)
+
+	if errService != nil {
+		webResponse := web.WebResponseFailed{
+			Status:  "failed",
+			Message: errService.Error(),
+		}
+		c.JSON(http.StatusBadRequest, webResponse)
+	} else {
+		webResponse := web.WebResponseSuccess{
+			Status:  "success",
+			Message: "success get social media link analytic",
+			Data:    socialMediaAnalyticResponse,
+		}
+		c.JSON(http.StatusOK, webResponse)
 	}
 
 }

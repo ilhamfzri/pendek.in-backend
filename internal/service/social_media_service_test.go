@@ -422,7 +422,7 @@ func TestSocialMediaServiceRedirectLink(t *testing.T) {
 
 	for _, test := range tests {
 		t.Run(test.TestName, func(t *testing.T) {
-			linkResponse, err := socialMediaService.RedirectLink(ctx, test.Request)
+			linkResponse, _, err := socialMediaService.RedirectLink(ctx, test.Request)
 			assert.Equal(t, err, test.ErrResponseExpected)
 			assert.Equal(t, test.LinkResponseExpected, linkResponse)
 		})

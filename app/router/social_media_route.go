@@ -13,10 +13,15 @@ import (
 func AddSocialMediaRoute(server *Server, DB *gorm.DB, logger *logger.Logger, jwt helper.IJwt) {
 	socialMediaTypeRepository := repository.NewSocialMediaTypeRepository(logger)
 	socialMediaLinkRepository := repository.NewSocialMediaLinkRepository(logger)
+	socialMediaInteractionRepository := repository.NewSocialMediaInteractionRepository(logger)
+	socialMediaAnalyticRepository := repository.NewSocialMediaAnalyticRepository(logger)
+	deviceAnalyticRepository := repository.NewDeviceAnalyticRepository(logger)
+
 	userRepository := repository.NewUserRepository(logger)
 
 	socialMediaLinkService := service.NewSocialMediaLinkService(userRepository, socialMediaLinkRepository, socialMediaTypeRepository, DB, logger, jwt)
-	socialMediaLinkController := controller.NewSocialMediaLink(socialMediaLinkService, logger)
+	socialMediaAnalyticsService := service.NewSocialMediaAnalyticService(userRepository, socialMediaLinkRepository, socialMediaInteractionRepository, socialMediaAnalyticRepository, deviceAnalyticRepository, DB, logger, jwt)
+	socialMediaLinkController := controller.NewSocialMediaLink(socialMediaLinkService, socialMediaAnalyticsService, logger)
 
 	jwtMiddleware := middleware.NewJwtMiddleware(jwt.GetSigningKey())
 	socialMediaRouteAuth := server.Router.Group("/v1/link/social-media")
@@ -26,6 +31,7 @@ func AddSocialMediaRoute(server *Server, DB *gorm.DB, logger *logger.Logger, jwt
 		socialMediaRouteAuth.POST("/", socialMediaLinkController.CreateLink)
 		socialMediaRouteAuth.PUT("/:type_id", socialMediaLinkController.UpdateLink)
 		socialMediaRouteAuth.GET("/", socialMediaLinkController.GetAllLink)
+		socialMediaRouteAuth.GET("/analytic", socialMediaLinkController.GetLinkAnalytic)
 	}
 
 	socialMediaRoute := server.Router.Group("")

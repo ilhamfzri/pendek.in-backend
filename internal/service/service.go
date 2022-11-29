@@ -21,5 +21,10 @@ type SocialMediaLinkService interface {
 	CreateLink(ctx context.Context, request web.SocialMediaLinkCreateRequest, host string, jwtToken string) (web.SocialMediaLinkResponse, error)
 	UpdateLink(ctx context.Context, request web.SocialMediaLinkUpdateRequest, host string, jwtToken string) (web.SocialMediaLinkResponse, error)
 	GetAllLink(ctx context.Context, host string, jwtToken string) ([]web.SocialMediaLinkResponse, error)
-	RedirectLink(ctx context.Context, request web.SocialMediaLinkRedirectRequest) (string, error)
+	RedirectLink(ctx context.Context, request web.SocialMediaLinkRedirectRequest) (string, uint, error)
+}
+
+type SocialMediaAnalytic interface {
+	SaveInteraction(ctx context.Context, request web.SocialMediaAnalyticInteractionRequest) error
+	GetLinkAnalytic(ctx context.Context, request web.SocialMediaAnalyticGetRequest, jwtToken string) (web.SocialMediaAnalyticResponse, error)
 }

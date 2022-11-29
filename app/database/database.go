@@ -66,6 +66,18 @@ func Migration(DB *gorm.DB, log *logger.Logger) {
 	log.FatalIfErr(err, errMigration)
 	log.Info().Msg("[Database] Successful Migration SocialMediaLink Table")
 
+	err = DB.AutoMigrate(&domain.SocialMediaInteraction{})
+	log.FatalIfErr(err, errMigration)
+	log.Info().Msg("[Database] Successful Migration SocialMediaInteraction Table")
+
+	err = DB.AutoMigrate(&domain.SocialMediaAnalytic{})
+	log.FatalIfErr(err, errMigration)
+	log.Info().Msg("[Database] Successful Migration SocialMediaAnalytic Table")
+
+	err = DB.AutoMigrate(&domain.DeviceAnalytic{})
+	log.FatalIfErr(err, errMigration)
+	log.Info().Msg("[Database] Successful Migration DeviceAnalytic Table")
+
 	CreateSocialMediaTypeEntries(DB, log)
 
 }

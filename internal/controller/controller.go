@@ -18,4 +18,5 @@ type SocialMediaLinkController interface {
 	UpdateLink(c *gin.Context)
 	GetAllLink(c *gin.Context)
 	RedirectLink(c *gin.Context)
+	GetLinkAnalytic(c *gin.Context)
 }

@@ -58,6 +58,5 @@ func GenerateLinkResponse(socialMediaName string, link_or_username string) strin
 	default:
 		linkResponse = link_or_username
 	}
-	fmt.Println(linkResponse)
 	return linkResponse
 }

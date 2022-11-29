@@ -25,3 +25,24 @@ func SocialMediaLinkDomainToResponse(smld *domain.SocialMediaLink, host string, 
 		RedirectLink:    GenerateRedirectLink(host, username, smld.SocialMediaType.Name),
 	}
 }
+
+func DeviceAnalyticDomainToResponse(da *domain.DeviceAnalytic) web.DeviceAnalyticResponse {
+	return web.DeviceAnalyticResponse{
+		Mobile:  da.Mobile,
+		Tablet:  da.Tablet,
+		Desktop: da.Desktop,
+		Other:   da.Other,
+	}
+}
+
+func SocialMediaAnalyticDomainToResponse(sma *domain.SocialMediaAnalytic, socialMediaName string) web.SocialMediaAnalyticResponse {
+	return web.SocialMediaAnalyticResponse{
+		SocialMediaLinkID: sma.SocialMediaLinkID,
+		SocialMediaName:   socialMediaName,
+		ClickCount:        sma.ClickCount,
+		ViewCount:         sma.ViewCount,
+		DeviceAnalytic:    DeviceAnalyticDomainToResponse(&sma.DeviceAnalytic),
+		Datetime:          sma.Date.Format("2006-01-02"),
+		LastUpdated:       sma.UpdatedAt,
+	}
+}
