@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"time"
 
 	"github.com/ilhamfzri/pendek.in/internal/model/domain"
 	"gorm.io/gorm"
@@ -27,4 +28,20 @@ type SocialMediaLinkRepository interface {
 	Update(ctx context.Context, tx *gorm.DB, socialMediaLink domain.SocialMediaLink) (domain.SocialMediaLink, error)
 	FindByUserID(ctx context.Context, tx *gorm.DB, userId string) ([]domain.SocialMediaLink, error)
 	FindByTypeAndUserID(ctx context.Context, tx *gorm.DB, typeId uint, userId string) (domain.SocialMediaLink, error)
+}
+
+type SocialMediaInteractionRepository interface {
+	Create(ctx context.Context, tx *gorm.DB, socialMediaInteraction domain.SocialMediaInteraction) error
+	FindBySocialMediaLinkIDAndDate(ctx context.Context, tx *gorm.DB, socialMediaLinkID uint, date time.Time) ([]domain.SocialMediaInteraction, error)
+}
+
+type SocialMediaAnalyticRepository interface {
+	Create(ctx context.Context, tx *gorm.DB, socialMediaAnalytic domain.SocialMediaAnalytic) (domain.SocialMediaAnalytic, error)
+	Update(ctx context.Context, tx *gorm.DB, socialMediaAnalytic domain.SocialMediaAnalytic) (domain.SocialMediaAnalytic, error)
+	FindBySocialMediaLinkIDAndDate(ctx context.Context, tx *gorm.DB, socialMediaLinkID uint, date time.Time) (domain.SocialMediaAnalytic, error)
+}
+
+type DeviceAnalyticRepository interface {
+	Create(ctx context.Context, tx *gorm.DB, deviceAnalytic domain.DeviceAnalytic) (domain.DeviceAnalytic, error)
+	Update(ctx context.Context, tx *gorm.DB, deviceAnalytic domain.DeviceAnalytic) (domain.DeviceAnalytic, error)
 }
