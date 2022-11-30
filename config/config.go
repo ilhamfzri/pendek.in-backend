@@ -107,6 +107,19 @@ func (config *Config) GetJwtConfig() JwtConfig {
 	return jwtConfig
 }
 
+type RedisConfig struct {
+	Host     string `mapstructure:"host"`
+	Port     int    `mapstructure:"port"`
+	Password string `mapstructure:"password"`
+}
+
+func (config *Config) GetRedisConfig() RedisConfig {
+	redisConfig := RedisConfig{}
+	err := config.Viper.UnmarshalKey("redis", &redisConfig)
+	panicIfError(err)
+	return redisConfig
+}
+
 func panicIfError(err error) {
 	if err != nil {
 		panic(err)

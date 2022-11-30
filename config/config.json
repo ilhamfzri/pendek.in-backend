@@ -23,6 +23,11 @@
         "password": "pendekin123456",
         "db_name": "pendekin_db"
     },
+    "redis": {
+        "host": "localhost",
+        "port": 6379,
+        "password": "pendekinredis123456"
+    },
     "log": {
         "level": "debug",
         "output": "app.log"
