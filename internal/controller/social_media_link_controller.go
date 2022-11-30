@@ -2,9 +2,12 @@ package controller
 
 import (
 	"context"
+	"encoding/json"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/go-redis/redis/v8"
 	"github.com/ilhamfzri/pendek.in/app/logger"
 	"github.com/ilhamfzri/pendek.in/helper"
 	"github.com/ilhamfzri/pendek.in/internal/model/web"
@@ -14,13 +17,17 @@ import (
 type SocialMediaLinkControllerImpl struct {
 	Service         service.SocialMediaLinkService
 	AnalyticService service.SocialMediaAnalytic
+	Redis           *redis.Client
 	Logger          *logger.Logger
 }
 
-func NewSocialMediaLink(service service.SocialMediaLinkService, analyticService service.SocialMediaAnalytic, logger *logger.Logger) SocialMediaLinkController {
+var IntervalSocialMediaAnalyticCacheTime = 30 * time.Minute
+
+func NewSocialMediaLink(service service.SocialMediaLinkService, analyticService service.SocialMediaAnalytic, redis *redis.Client, logger *logger.Logger) SocialMediaLinkController {
 	return &SocialMediaLinkControllerImpl{
 		Service:         service,
 		AnalyticService: analyticService,
+		Redis:           redis,
 		Logger:          logger,
 	}
 }
@@ -176,7 +183,23 @@ func (controller *SocialMediaLinkControllerImpl) GetLinkAnalytic(c *gin.Context)
 		return
 	}
 
-	socialMediaAnalyticResponse, errService := controller.AnalyticService.GetLinkAnalytic(ctx, request, jwtToken)
+	cacheKey := helper.GenerateCacheKeyByJwt(c)
+	cmdGet := controller.Redis.Get(ctx, cacheKey)
+
+	var socialMediaAnalyticResponse []web.SocialMediaAnalyticResponse
+	var errService error
+
+	if cmdGet.Err() != nil {
+		socialMediaAnalyticResponse, errService = controller.AnalyticService.GetLinkAnalytic(ctx, request, jwtToken)
+		bytes, _ := json.Marshal(socialMediaAnalyticResponse)
+		cmdSet := controller.Redis.Set(ctx, cacheKey, bytes, IntervalSocialMediaAnalyticCacheTime)
+		controller.Logger.PanicIfErr(cmdSet.Err(), "[SocialMediaController][ErrorRedis]")
+	} else {
+		var result []byte
+		err := cmdGet.Scan(&result)
+		json.Unmarshal(result, &socialMediaAnalyticResponse)
+		controller.Logger.PanicIfErr(err, "[SocialMediaController][ErrorRedis]")
+	}
 
 	if errService != nil {
 		webResponse := web.WebResponseFailed{
@@ -199,7 +222,23 @@ func (controller *SocialMediaLinkControllerImpl) GetSummaryLinkAnalytic(c *gin.C
 	ctx := context.Background()
 	jwtToken := helper.ExtractTokenFromRequestHeader(c)
 
-	socialMediaAnalyticSummaryResponse, errService := controller.AnalyticService.GetSummaryLinkAnalytic(ctx, jwtToken)
+	key := helper.GenerateCacheKeyByJwt(c)
+	cmdGet := controller.Redis.Get(ctx, key)
+
+	var socialMediaAnalyticSummaryResponse web.SocialMediaAnalyticSummaryResponse
+	var errService error
+
+	if cmdGet.Err() != nil {
+		socialMediaAnalyticSummaryResponse, errService = controller.AnalyticService.GetSummaryLinkAnalytic(ctx, jwtToken)
+		bytes, _ := json.Marshal(socialMediaAnalyticSummaryResponse)
+		cmdSet := controller.Redis.Set(ctx, key, bytes, IntervalSocialMediaAnalyticCacheTime)
+		controller.Logger.PanicIfErr(cmdSet.Err(), "[SocialMediaController][ErrorRedis]")
+	} else {
+		var result []byte
+		err := cmdGet.Scan(&result)
+		json.Unmarshal(result, &socialMediaAnalyticSummaryResponse)
+		controller.Logger.PanicIfErr(err, "[SocialMediaController][ErrorRedis]")
+	}
 
 	if errService != nil {
 		webResponse := web.WebResponseFailed{

@@ -3,7 +3,6 @@ package service
 import (
 	"context"
 	"errors"
-	"fmt"
 	"time"
 
 	"github.com/ilhamfzri/pendek.in/app/logger"
@@ -191,8 +190,6 @@ func (service *SocialMediaAnalyticServiceImpl) GetSummaryLinkAnalytic(ctx contex
 
 		for requestDate := startDate; !requestDate.After(endDate); requestDate = requestDate.AddDate(0, 0, 1) {
 			requestDate = helper.ToDate(requestDate)
-
-			fmt.Println(requestDate, socialMediaLink.SocialMediaType.Name)
 
 			socialMediaAnalytic, repoAnalyticErr := service.SocialMediaAnalyticRepository.FindBySocialMediaLinkIDAndDate(ctx, tx, socialMediaLink.ID, requestDate)
 			if repoAnalyticErr != nil && !errors.Is(repoAnalyticErr, gorm.ErrRecordNotFound) {

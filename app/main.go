@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/ilhamfzri/pendek.in/app/cache"
 	"github.com/ilhamfzri/pendek.in/app/database"
 	"github.com/ilhamfzri/pendek.in/app/logger"
 	"github.com/ilhamfzri/pendek.in/app/router"
@@ -39,6 +40,10 @@ func main() {
 	serverConfig := config.GetServerConfig()
 	server := router.NewServer(serverConfig)
 
+	//.- Redis Initialize
+	redisConfig := config.GetRedisConfig()
+	redis := cache.NewRedisClient(redisConfig, logger)
+
 	//.- Jwt Initalize
 	jwtConfig := config.GetJwtConfig()
 	jwt := helper.NewJwt(jwtConfig)
@@ -57,7 +62,7 @@ func main() {
 
 	//.- User Router Initalize
 	router.AddUsersRoute(server, db, logger, jwt)
-	router.AddSocialMediaRoute(server, db, logger, jwt)
+	router.AddSocialMediaRoute(server, db, redis, logger, jwt)
 
 	//.- Run Server
 	server.Run()
