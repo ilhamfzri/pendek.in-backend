@@ -9,6 +9,7 @@ import (
 type CustomLinkAnalytic struct {
 	gorm.Model
 	TotalClick       int
+	ViewCount        int
 	CustomLinkID     uint
 	DeviceAnalyticID uint
 	DeviceAnalytic   DeviceAnalytic `gorm:"foreignKey:DeviceAnalyticID"`

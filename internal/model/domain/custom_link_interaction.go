@@ -6,8 +6,7 @@ import (
 
 type CustomLinkInteraction struct {
 	gorm.Model
-	CustomLinkID    string
-	ClientIP        string
-	Username        string
-	SocialMediaName string
+	CustomLinkID string
+	ClientIP     string
+	Username     string
 }

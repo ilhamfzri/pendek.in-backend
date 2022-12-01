@@ -78,7 +78,28 @@ func Migration(DB *gorm.DB, log *logger.Logger) {
 	log.FatalIfErr(err, errMigration)
 	log.Info().Msg("[Database] Successful Migration DeviceAnalytic Table")
 
+	err = DB.AutoMigrate(&domain.CustomLink{})
+	log.FatalIfErr(err, errMigration)
+	log.Info().Msg("[Database] Successful Migration CustomLink Table")
+
+	err = DB.AutoMigrate(&domain.Thumbnail{})
+	log.FatalIfErr(err, errMigration)
+	log.Info().Msg("[Database] Successful Migration Thumbnail Table")
+
+	err = DB.AutoMigrate(&domain.CustomThumbnail{})
+	log.FatalIfErr(err, errMigration)
+	log.Info().Msg("[Database] Successful Migration CustomThumbnail Table")
+
+	err = DB.AutoMigrate(&domain.CustomLinkInteraction{})
+	log.FatalIfErr(err, errMigration)
+	log.Info().Msg("[Database] Successful Migration CustomLinkInteraction Table")
+
+	err = DB.AutoMigrate(&domain.CustomLinkAnalytic{})
+	log.FatalIfErr(err, errMigration)
+	log.Info().Msg("[Database] Successful Migration CustomLinkAnalytic Table")
+
 	CreateSocialMediaTypeEntries(DB, log)
+	CreateThumbnailEntries(DB, log)
 
 }
 
@@ -132,4 +153,30 @@ func CreateSocialMediaTypeEntries(DB *gorm.DB, log *logger.Logger) {
 		}
 	}
 	log.Info().Msg("[Database] Successful Create SocialMediaType Entries")
+}
+
+func CreateThumbnailEntries(DB *gorm.DB, log *logger.Logger) {
+	tx := DB.Begin()
+	ctx := context.Background()
+	defer helper.CommitOrRollback(tx)
+
+	thumbnailRepository := repository.NewThumbnailRepository(log)
+
+	thumbnailEntries := []domain.Thumbnail{
+		{Name: "Home", IconUrl: "http://localhost:8080/home"},
+		{Name: "Work", IconUrl: "http://localhost:8080/work"},
+	}
+
+	for _, thumbnailEntry := range thumbnailEntries {
+		_, repoErr := thumbnailRepository.FindByName(ctx, tx, thumbnailEntry.Name)
+		if repoErr != nil && errors.Is(repoErr, gorm.ErrRecordNotFound) {
+			_, err := thumbnailRepository.Create(ctx, tx, thumbnailEntry)
+			log.PanicIfErr(err, "[Database] Failed Create Thumbnail Entries")
+
+		} else {
+			log.PanicIfErr(repoErr, "[Database] Failed Create Thumbnail Entries")
+		}
+	}
+	log.Info().Msg("[Database] Successful Create Thumbnail Entries")
+
 }

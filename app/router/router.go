@@ -34,9 +34,13 @@ func NewServer(cfg config.ServerConfig) *Server {
 	// .- Initialize Resources Directories
 	os.MkdirAll(cfg.ResourcesDirPath, os.ModePerm)
 	userProfilePicturePath := filepath.Join(cfg.ResourcesDirPath, "profile_pic")
+	customThumbnailPicturePath := filepath.Join(cfg.ResourcesDirPath, "thumbnail")
+
 	os.MkdirAll(userProfilePicturePath, os.ModePerm)
+	os.MkdirAll(customThumbnailPicturePath, os.ModePerm)
 
 	os.Setenv("PROFILE_IMG_DIR", userProfilePicturePath)
+	os.Setenv("THUMBNAIL_IMG_DIR", customThumbnailPicturePath)
 
 	return &Server{
 		Server: server,

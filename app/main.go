@@ -62,7 +62,12 @@ func main() {
 
 	//.- User Router Initalize
 	router.AddUsersRoute(server, db, logger, jwt)
+
+	//.- Social Media Router Initialize
 	router.AddSocialMediaRoute(server, db, redis, logger, jwt)
+
+	//.- Custom Link Router Initialize
+	router.AddCustomLinkRoute(server, db, redis, logger, jwt)
 
 	//.- Run Server
 	server.Run()

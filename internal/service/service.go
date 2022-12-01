@@ -29,3 +29,14 @@ type SocialMediaAnalytic interface {
 	GetLinkAnalytic(ctx context.Context, request web.SocialMediaAnalyticGetRequest, jwtToken string) ([]web.SocialMediaAnalyticResponse, error)
 	GetSummaryLinkAnalytic(ctx context.Context, jwtToken string) (web.SocialMediaAnalyticSummaryResponse, error)
 }
+
+type CustomLinkService interface {
+	CreateLink(ctx context.Context, request web.CustomLinkCreateRequest, domainName string, jwtToken string) (web.CustomLinkResponse, error)
+	UpdateLink(ctx context.Context, request web.CustomLinkUpdateRequest, domainName string, jwtToken string) (web.CustomLinkResponse, error)
+	GetLink(ctx context.Context, request web.CustomLinkGetRequest, jwtToken string) (web.CustomLinkResponse, error)
+	GetAllLink(ctx context.Context, domainName string, jwtToken string) ([]web.CustomLinkResponse, error)
+	GetAllThumbnail(ctx context.Context) ([]web.ThumbnailResponse, error)
+	GetUserThumbnail(ctx context.Context, domainName string, jwtToken string) ([]web.ThumbnailResponse, error)
+	UploadCustomThumbnail(ctx context.Context, imgData []byte, domainName string, jwtToken string) (web.ThumbnailResponse, error)
+	CheckShortLinkAvaibility(ctx context.Context, request web.CustomLinkCheckShortCodeRequest) (bool, error)
+}

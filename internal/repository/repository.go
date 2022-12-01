@@ -45,3 +45,26 @@ type DeviceAnalyticRepository interface {
 	Create(ctx context.Context, tx *gorm.DB, deviceAnalytic domain.DeviceAnalytic) (domain.DeviceAnalytic, error)
 	Update(ctx context.Context, tx *gorm.DB, deviceAnalytic domain.DeviceAnalytic) (domain.DeviceAnalytic, error)
 }
+
+type ThumbnailRepository interface {
+	Create(ctx context.Context, tx *gorm.DB, thumbnail domain.Thumbnail) (domain.Thumbnail, error)
+	FindByID(ctx context.Context, tx *gorm.DB, id int) (domain.Thumbnail, error)
+	FindByName(ctx context.Context, tx *gorm.DB, name string) (domain.Thumbnail, error)
+	FetchAll(ctx context.Context, tx *gorm.DB) ([]domain.Thumbnail, error)
+}
+
+type CustomThumbnailRepository interface {
+	Create(ctx context.Context, tx *gorm.DB, thumbnail domain.CustomThumbnail) (domain.CustomThumbnail, error)
+	FetchAllByUserID(ctx context.Context, tx *gorm.DB, userID string) ([]domain.CustomThumbnail, error)
+	FindByThumbnailIDAndUserID(ctx context.Context, tx *gorm.DB, thumbnailID int, userID string) (domain.CustomThumbnail, error)
+}
+
+type CustomLinkRepository interface {
+	Create(ctx context.Context, tx *gorm.DB, link domain.CustomLink) (domain.CustomLink, error)
+	Update(ctx context.Context, tx *gorm.DB, link domain.CustomLink) (domain.CustomLink, error)
+	FindByShortLinkCode(ctx context.Context, tx *gorm.DB, shortLinkCode string) (domain.CustomLink, error)
+	FindByIdAndUserID(ctx context.Context, tx *gorm.DB, id int, userId string) (domain.CustomLink, error)
+	FetchAllByUserID(ctx context.Context, tx *gorm.DB, userID string) ([]domain.CustomLink, error)
+	UpdateThumbnailIDFK(ctx context.Context, tx *gorm.DB, linkID uint, thumbnailID *uint) (domain.CustomLink, error)
+	UpdateCustomThumbnailIDFK(ctx context.Context, tx *gorm.DB, linkID uint, customThumbnailID *uint) (domain.CustomLink, error)
+}

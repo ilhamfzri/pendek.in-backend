@@ -60,3 +60,8 @@ func GenerateLinkResponse(socialMediaName string, link_or_username string) strin
 	}
 	return linkResponse
 }
+
+func GetCustomThumbnailUrl(domain string, imageID string) string {
+	thumbnailUrl := fmt.Sprintf("%s/%s/%s.jpg", domain, thumbnailResourceEndpointPath, imageID)
+	return thumbnailUrl
+}

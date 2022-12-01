@@ -1,6 +1,8 @@
 package controller
 
-import "github.com/gin-gonic/gin"
+import (
+	"github.com/gin-gonic/gin"
+)
 
 type UserController interface {
 	Register(c *gin.Context)
@@ -20,4 +22,15 @@ type SocialMediaLinkController interface {
 	RedirectLink(c *gin.Context)
 	GetLinkAnalytic(c *gin.Context)
 	GetSummaryLinkAnalytic(c *gin.Context)
+}
+
+type CustomLinkController interface {
+	CreateLink(c *gin.Context)
+	UpdateLink(c *gin.Context)
+	GetLink(c *gin.Context)
+	GetAllLink(c *gin.Context)
+	GetAllThumbnail(c *gin.Context)
+	GetUserThumbnail(c *gin.Context)
+	UploadCustomThumbnail(c *gin.Context)
+	CheckShortLinkAvaibility(c *gin.Context)
 }
