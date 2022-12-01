@@ -102,7 +102,7 @@ func (service *SocialMediaAnalyticServiceImpl) GetLinkAnalytic(ctx context.Conte
 			socialMediaInteractions, repoInteractionErr := service.SocialMediaInteractionRepository.
 				FindBySocialMediaLinkIDAndDate(ctx, tx, socialMediaLink.ID, requestDate)
 
-			if repoInteractionErr != nil && !errors.Is(repoErr, gorm.ErrRecordNotFound) {
+			if repoInteractionErr != nil && !errors.Is(repoInteractionErr, gorm.ErrRecordNotFound) {
 				service.Logger.PanicIfErr(repoInteractionErr, ErrSocialMediaAnalyticService)
 			}
 

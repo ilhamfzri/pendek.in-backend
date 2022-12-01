@@ -6,7 +6,7 @@ import (
 
 type CustomLinkInteraction struct {
 	gorm.Model
-	CustomLinkID string
+	CustomLinkID uint `gorm:"index"`
 	ClientIP     string
-	Username     string
+	UserAgent    string
 }

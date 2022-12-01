@@ -87,3 +87,14 @@ func CustomLinkDomainToResponse(l *domain.CustomLink) web.CustomLinkResponse {
 
 	return customLinkResponse
 }
+
+func CustomLinkAnalyticDomainToResponse(cla *domain.CustomLinkAnalytic) web.CustomLinkAnalyticResponse {
+	return web.CustomLinkAnalyticResponse{
+		LinkID:         cla.CustomLinkID,
+		ClickCount:     cla.ClickCount,
+		ViewCount:      cla.ViewCount,
+		DeviceAnalytic: DeviceAnalyticDomainToResponse(&cla.DeviceAnalytic),
+		Datetime:       cla.Date.Format("2006-01-02"),
+		LastUpdated:    cla.UpdatedAt,
+	}
+}

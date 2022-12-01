@@ -34,4 +34,6 @@ type CustomLinkController interface {
 	UploadCustomThumbnail(c *gin.Context)
 	CheckShortLinkAvaibility(c *gin.Context)
 	RedirectLink(c *gin.Context)
+	GetLinkAnalytic(c *gin.Context)
+	GetSummaryLinkAnalytic(c *gin.Context)
 }

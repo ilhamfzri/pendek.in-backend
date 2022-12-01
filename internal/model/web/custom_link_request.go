@@ -1,5 +1,7 @@
 package web
 
+import "time"
+
 type CustomLinkCreateRequest struct {
 	Title           string `json:"title" binding:"required,min=1,max=20"`
 	ShortLinkCode   string `json:"short_link_code" binding:"required,min=5,max=20,alphanum"`
@@ -29,4 +31,16 @@ type CustomLinkRedirectRequest struct {
 
 type CustomLinkCheckShortCodeAvaibilityRequest struct {
 	Code string `form:"code" binding:"required,min=5,max=20"`
+}
+
+type CustomLinkAnalyticInteractionRequest struct {
+	ClientIP     string
+	UserAgent    string
+	CustomLinkID uint
+}
+
+type CustomLinkAnalyticGetRequest struct {
+	LinkID    int       `form:"link_id" binding:"required"`
+	StartDate time.Time `form:"start_date" binding:"required" time_format:"2006-01-02"`
+	EndDate   time.Time `form:"end_date" binding:"required" time_format:"2006-01-02"`
 }

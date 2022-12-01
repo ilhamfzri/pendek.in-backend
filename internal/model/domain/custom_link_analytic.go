@@ -8,7 +8,7 @@ import (
 
 type CustomLinkAnalytic struct {
 	gorm.Model
-	TotalClick       int
+	ClickCount       int
 	ViewCount        int
 	CustomLinkID     uint
 	DeviceAnalyticID uint

@@ -23,3 +23,22 @@ func SocialMediaInteractionsToDeviceAnalytic(socialMediaInteractions *[]domain.S
 	}
 	return deviceAnalytic
 }
+
+func CustomLinkInteractionsToDeviceAnalytic(customLinkInteractions *[]domain.CustomLinkInteraction) domain.DeviceAnalytic {
+	deviceAnalytic := domain.DeviceAnalytic{}
+	for _, customLinkInteraction := range *customLinkInteractions {
+		userAgent := customLinkInteraction.UserAgent
+		ua := uaparser.Parse(userAgent)
+
+		if ua.Desktop {
+			deviceAnalytic.Desktop += 1
+		} else if ua.Mobile {
+			deviceAnalytic.Mobile += 1
+		} else if ua.Tablet {
+			deviceAnalytic.Tablet += 1
+		} else {
+			deviceAnalytic.Other += 1
+		}
+	}
+	return deviceAnalytic
+}

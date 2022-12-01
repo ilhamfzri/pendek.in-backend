@@ -19,11 +19,15 @@ import (
 
 func AddCustomLinkRoute(server *Server, DB *gorm.DB, redis *redis.Client, logger *logger.Logger, jwt helper.IJwt) {
 	customLinkRepository := repository.NewCustomLinkRepository(logger)
+	customLinkAnalyticRepository := repository.NewCustomLinkAnalyticRepository(logger)
+	customLinkInteractionRepository := repository.NewCustomLinkInteractionRepository(logger)
 	customThumbnailRepository := repository.NewCustomThumbnailRepository(logger)
 	thumbnailRepository := repository.NewThumbnailRepository(logger)
+	deviceAnalyticRepository := repository.NewDeviceAnalyticRepository(logger)
 
 	customLinkService := service.NewCustomLinkService(customLinkRepository, customThumbnailRepository, thumbnailRepository, DB, logger, jwt)
-	customLinkController := controller.NewCustomLinkController(customLinkService, logger)
+	customLinkAnalyticService := service.NewCustomLinkAnalyticService(customLinkRepository, customLinkAnalyticRepository, customLinkInteractionRepository, deviceAnalyticRepository, DB, logger, jwt)
+	customLinkController := controller.NewCustomLinkController(customLinkService, customLinkAnalyticService, redis, logger)
 
 	jwtMiddleware := middleware.NewJwtMiddleware(jwt.GetSigningKey())
 	customLinkRouteAuth := server.Router.Group("/v1/link/custom")
@@ -37,6 +41,8 @@ func AddCustomLinkRoute(server *Server, DB *gorm.DB, redis *redis.Client, logger
 		customLinkRouteAuth.GET("/user-thumbnail-list", customLinkController.GetUserThumbnail)
 		customLinkRouteAuth.GET("/default-thumbnail-list", customLinkController.GetAllThumbnail)
 		customLinkRouteAuth.GET("/check-short-code", customLinkController.CheckShortLinkAvaibility)
+		customLinkRouteAuth.GET("/analytic", customLinkController.GetLinkAnalytic)
+		customLinkRouteAuth.GET("/analytic/summary", customLinkController.GetSummaryLinkAnalytic)
 	}
 
 	customThumbnailResourcePath := os.Getenv("THUMBNAIL_IMG_DIR")

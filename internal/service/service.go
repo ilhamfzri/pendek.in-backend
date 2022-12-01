@@ -41,3 +41,9 @@ type CustomLinkService interface {
 	CheckShortLinkAvaibility(ctx context.Context, request web.CustomLinkCheckShortCodeAvaibilityRequest) error
 	RedirectLink(ctx context.Context, request web.CustomLinkRedirectRequest) (string, uint, error)
 }
+
+type CustomLinkAnalyticService interface {
+	SaveInteraction(ctx context.Context, request web.CustomLinkAnalyticInteractionRequest) error
+	GetLinkAnalytic(ctx context.Context, request web.CustomLinkAnalyticGetRequest, jwtToken string) ([]web.CustomLinkAnalyticResponse, error)
+	GetSummaryLinkAnalytic(ctx context.Context, jwtToken string) (web.CustomLinkAnalyticSummaryResponse, error)
+}

@@ -77,6 +77,6 @@ func (repository *CustomLinkRepositoryImpl) FindByIdAndUserID(ctx context.Contex
 
 func (repository *CustomLinkRepositoryImpl) FetchAllByUserID(ctx context.Context, tx *gorm.DB, userID string) ([]domain.CustomLink, error) {
 	var links []domain.CustomLink
-	result := tx.WithContext(ctx).Preload("CustomThumbnail").Preload("Thumbnail").Where("user_id = ?", userID).Find(&links)
+	result := tx.WithContext(ctx).Preload("CustomThumbnail").Preload("Thumbnail").Where("user_id = ?", userID).Order("id ASC").Find(&links)
 	return links, result.Error
 }

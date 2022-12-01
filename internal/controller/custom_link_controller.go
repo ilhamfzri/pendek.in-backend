@@ -3,27 +3,35 @@ package controller
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"io"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/go-redis/redis/v8"
 	"github.com/ilhamfzri/pendek.in/app/logger"
 	"github.com/ilhamfzri/pendek.in/helper"
 	"github.com/ilhamfzri/pendek.in/internal/model/web"
 	"github.com/ilhamfzri/pendek.in/internal/service"
 )
 
+var IntervalCustomLinkAnalyticCacheTime = 30 * time.Minute
 var ErrCustomLinkController = "[CustomLinkController] Failed To Execute"
 
 type CustomLinkControllerImpl struct {
-	Service service.CustomLinkService
-	Logger  *logger.Logger
+	Service         service.CustomLinkService
+	AnalyticService service.CustomLinkAnalyticService
+	Redis           *redis.Client
+	Logger          *logger.Logger
 }
 
-func NewCustomLinkController(service service.CustomLinkService, logger *logger.Logger) CustomLinkController {
+func NewCustomLinkController(service service.CustomLinkService, serviceAnalytic service.CustomLinkAnalyticService, redis *redis.Client, logger *logger.Logger) CustomLinkController {
 	return &CustomLinkControllerImpl{
-		Service: service,
-		Logger:  logger,
+		Service:         service,
+		AnalyticService: serviceAnalytic,
+		Redis:           redis,
+		Logger:          logger,
 	}
 }
 
@@ -261,7 +269,15 @@ func (controller *CustomLinkControllerImpl) RedirectLink(c *gin.Context) {
 		return
 	}
 
-	longLink, _, errService := controller.Service.RedirectLink(ctx, request)
+	longLink, linkID, errService := controller.Service.RedirectLink(ctx, request)
+	if errService == nil {
+		requstSaveInteraction := web.CustomLinkAnalyticInteractionRequest{
+			ClientIP:     c.ClientIP(),
+			UserAgent:    c.Request.Header.Get("User-Agent"),
+			CustomLinkID: linkID,
+		}
+		_ = controller.AnalyticService.SaveInteraction(ctx, requstSaveInteraction)
+	}
 
 	if errService != nil {
 		webResponse := web.WebResponseFailed{
@@ -273,4 +289,87 @@ func (controller *CustomLinkControllerImpl) RedirectLink(c *gin.Context) {
 		c.Redirect(http.StatusFound, longLink)
 	}
 
+}
+
+func (controller *CustomLinkControllerImpl) GetLinkAnalytic(c *gin.Context) {
+	ctx := context.Background()
+	jwtToken := helper.ExtractTokenFromRequestHeader(c)
+	var request web.CustomLinkAnalyticGetRequest
+
+	err := c.ShouldBindQuery(&request)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, helper.ToWebResponseFailed(err))
+		return
+	}
+
+	cacheKey := helper.GenerateCacheKeyByJwt(c)
+	cmdGet := controller.Redis.Get(ctx, cacheKey)
+
+	var customLinkAnalyticResponse []web.CustomLinkAnalyticResponse
+	var errService error
+
+	if cmdGet.Err() != nil {
+		customLinkAnalyticResponse, errService = controller.AnalyticService.GetLinkAnalytic(ctx, request, jwtToken)
+		bytes, _ := json.Marshal(customLinkAnalyticResponse)
+		cmdSet := controller.Redis.Set(ctx, cacheKey, bytes, IntervalCustomLinkAnalyticCacheTime)
+		controller.Logger.PanicIfErr(cmdSet.Err(), "[Custom Link Controller][Error Redis]")
+	} else {
+		var result []byte
+		err := cmdGet.Scan(&result)
+		json.Unmarshal(result, &customLinkAnalyticResponse)
+		controller.Logger.PanicIfErr(err, "[Custom Link Controller][Error Redis]")
+	}
+
+	if errService != nil {
+		webResponse := web.WebResponseFailed{
+			Status:  "failed",
+			Message: errService.Error(),
+		}
+		c.JSON(http.StatusBadRequest, webResponse)
+	} else {
+		webResponse := web.WebResponseSuccess{
+			Status:  "success",
+			Message: "success get link analytic",
+			Data:    customLinkAnalyticResponse,
+		}
+		c.JSON(http.StatusOK, webResponse)
+	}
+}
+
+func (controller *CustomLinkControllerImpl) GetSummaryLinkAnalytic(c *gin.Context) {
+	ctx := context.Background()
+	jwtToken := helper.ExtractTokenFromRequestHeader(c)
+
+	key := helper.GenerateCacheKeyByJwt(c)
+	cmdGet := controller.Redis.Get(ctx, key)
+
+	var customLinkAnalyticSummaryResponse web.CustomLinkAnalyticSummaryResponse
+	var errService error
+
+	if cmdGet.Err() != nil {
+		customLinkAnalyticSummaryResponse, errService = controller.AnalyticService.GetSummaryLinkAnalytic(ctx, jwtToken)
+		bytes, _ := json.Marshal(customLinkAnalyticSummaryResponse)
+		cmdSet := controller.Redis.Set(ctx, key, bytes, IntervalCustomLinkAnalyticCacheTime)
+		controller.Logger.PanicIfErr(cmdSet.Err(), "[Custom Link Controller][Error Redis]")
+	} else {
+		var result []byte
+		err := cmdGet.Scan(&result)
+		json.Unmarshal(result, &customLinkAnalyticSummaryResponse)
+		controller.Logger.PanicIfErr(err, "[Custom Link Controller][Error Redis]")
+	}
+
+	if errService != nil {
+		webResponse := web.WebResponseFailed{
+			Status:  "failed",
+			Message: errService.Error(),
+		}
+		c.JSON(http.StatusBadRequest, webResponse)
+	} else {
+		webResponse := web.WebResponseSuccess{
+			Status:  "success",
+			Message: "success get link analytic summary",
+			Data:    customLinkAnalyticSummaryResponse,
+		}
+		c.JSON(http.StatusOK, webResponse)
+	}
 }
