@@ -33,10 +33,11 @@ type SocialMediaAnalytic interface {
 type CustomLinkService interface {
 	CreateLink(ctx context.Context, request web.CustomLinkCreateRequest, domainName string, jwtToken string) (web.CustomLinkResponse, error)
 	UpdateLink(ctx context.Context, request web.CustomLinkUpdateRequest, domainName string, jwtToken string) (web.CustomLinkResponse, error)
-	GetLink(ctx context.Context, request web.CustomLinkGetRequest, jwtToken string) (web.CustomLinkResponse, error)
+	GetLink(ctx context.Context, request web.CustomLinkGetRequest, domainName string, jwtToken string) (web.CustomLinkResponse, error)
 	GetAllLink(ctx context.Context, domainName string, jwtToken string) ([]web.CustomLinkResponse, error)
 	GetAllThumbnail(ctx context.Context) ([]web.ThumbnailResponse, error)
 	GetUserThumbnail(ctx context.Context, domainName string, jwtToken string) ([]web.ThumbnailResponse, error)
 	UploadCustomThumbnail(ctx context.Context, imgData []byte, domainName string, jwtToken string) (web.ThumbnailResponse, error)
-	CheckShortLinkAvaibility(ctx context.Context, request web.CustomLinkCheckShortCodeRequest) (bool, error)
+	CheckShortLinkAvaibility(ctx context.Context, request web.CustomLinkCheckShortCodeAvaibilityRequest) error
+	RedirectLink(ctx context.Context, request web.CustomLinkRedirectRequest) (string, uint, error)
 }

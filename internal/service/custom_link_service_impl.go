@@ -36,6 +36,7 @@ var (
 	ErrUserThumbnailIDNotFound = errors.New("user_thumbnail_id invalid, make sure user_thumbnail_id is available")
 	ErrShortLinkCodeRegistered = errors.New("short_link_code is registered")
 	ErrCustomLinkNotRegistered = errors.New("link is not registered")
+	ErrCustomLinkInvalid       = errors.New("link is invalid")
 )
 
 func NewCustomLinkService(clr repository.CustomLinkRepository, ctr repository.CustomThumbnailRepository, tr repository.ThumbnailRepository,
@@ -252,8 +253,35 @@ func (service *CustomLinkServiceImpl) UpdateLink(ctx context.Context, request we
 	return customLinkResponse, nil
 }
 
-func (service *CustomLinkServiceImpl) GetLink(ctx context.Context, request web.CustomLinkGetRequest, jwtToken string) (web.CustomLinkResponse, error) {
-	panic("not implemented") // TODO: Implement
+func (service *CustomLinkServiceImpl) GetLink(ctx context.Context, request web.CustomLinkGetRequest, domainName string, jwtToken string) (web.CustomLinkResponse, error) {
+	// It's getting the claims from the token.
+	claims := service.Jwt.GetClaims(jwtToken)
+
+	// It's a transaction.
+	tx := service.DB.Begin()
+	defer helper.CommitOrRollback(tx)
+
+	customLink, errRepo := service.CustomLinkRepository.FindByIdAndUserID(ctx, tx, int(request.LinkID), claims.Id)
+	if errRepo != nil && !errors.Is(errRepo, gorm.ErrRecordNotFound) {
+		service.Logger.PanicIfErr(errRepo, ErrCustomLinkService)
+	}
+
+	if errors.Is(errRepo, gorm.ErrRecordNotFound) {
+		return web.CustomLinkResponse{}, ErrCustomLinkNotRegistered
+	}
+
+	var thumbnailUrl string
+	if customLink.CustomThumbnailID != nil {
+		thumbnailUrl = helper.GetCustomThumbnailUrl(domainName, customLink.CustomThumbnail.ImageID)
+	}
+
+	if customLink.ThumbnailID != nil {
+		thumbnailUrl = customLink.Thumbnail.IconUrl
+	}
+
+	customLinkResponse := helper.CustomLinkDomainToResponse(&customLink)
+	customLinkResponse.ThumbnailUrl = thumbnailUrl
+	return customLinkResponse, nil
 }
 
 func (service *CustomLinkServiceImpl) GetAllLink(ctx context.Context, domainName string, jwtToken string) ([]web.CustomLinkResponse, error) {
@@ -362,6 +390,39 @@ func (service *CustomLinkServiceImpl) UploadCustomThumbnail(ctx context.Context,
 	return thumbnailResponse, nil
 }
 
-func (service *CustomLinkServiceImpl) CheckShortLinkAvaibility(ctx context.Context, request web.CustomLinkCheckShortCodeRequest) (bool, error) {
-	panic("not implemented") // TODO: Implement
+func (service *CustomLinkServiceImpl) CheckShortLinkAvaibility(ctx context.Context, request web.CustomLinkCheckShortCodeAvaibilityRequest) error {
+	// It's a transaction.
+	tx := service.DB.Begin()
+	defer helper.CommitOrRollback(tx)
+
+	customLink, errRepo := service.CustomLinkRepository.FindByShortLinkCode(ctx, tx, request.Code)
+	if errRepo != nil && !errors.Is(errRepo, gorm.ErrRecordNotFound) {
+		service.Logger.PanicIfErr(errRepo, ErrCustomLinkService)
+	}
+
+	if customLink.ID != 0 {
+		return ErrShortLinkCodeRegistered
+	}
+	return nil
+}
+
+func (service *CustomLinkServiceImpl) RedirectLink(ctx context.Context, request web.CustomLinkRedirectRequest) (string, uint, error) {
+	// It's a transaction.
+	tx := service.DB.Begin()
+	defer helper.CommitOrRollback(tx)
+
+	customLink, errRepo := service.CustomLinkRepository.FindByShortLinkCode(ctx, tx, request.ShortLinkCode)
+	if errRepo != nil && !errors.Is(errRepo, gorm.ErrRecordNotFound) {
+		service.Logger.PanicIfErr(errRepo, ErrCustomLinkService)
+	}
+
+	if errors.Is(errRepo, gorm.ErrRecordNotFound) {
+		return "", 0, ErrCustomLinkInvalid
+	}
+
+	if !customLink.Activate {
+		return "", 0, ErrCustomLinkInvalid
+	}
+
+	return customLink.LongLink, customLink.ID, nil
 }

@@ -31,10 +31,12 @@ func AddCustomLinkRoute(server *Server, DB *gorm.DB, redis *redis.Client, logger
 	{
 		customLinkRouteAuth.POST("/", customLinkController.CreateLink)
 		customLinkRouteAuth.GET("/", customLinkController.GetAllLink)
+		customLinkRouteAuth.GET("/:link_id", customLinkController.GetLink)
 		customLinkRouteAuth.PUT("/:link_id", customLinkController.UpdateLink)
 		customLinkRouteAuth.POST("/upload-thumbnail", customLinkController.UploadCustomThumbnail)
 		customLinkRouteAuth.GET("/user-thumbnail-list", customLinkController.GetUserThumbnail)
 		customLinkRouteAuth.GET("/default-thumbnail-list", customLinkController.GetAllThumbnail)
+		customLinkRouteAuth.GET("/check-short-code", customLinkController.CheckShortLinkAvaibility)
 	}
 
 	customThumbnailResourcePath := os.Getenv("THUMBNAIL_IMG_DIR")
@@ -52,4 +54,6 @@ func AddCustomLinkRoute(server *Server, DB *gorm.DB, redis *redis.Client, logger
 		customThumbnailRouteResources.StaticFS("/", customThumbnailResourceDirectory)
 	}
 
+	redirectCustomLinkRoute := server.Router.Group("/l")
+	redirectCustomLinkRoute.GET("/:short_link_code", customLinkController.RedirectLink)
 }

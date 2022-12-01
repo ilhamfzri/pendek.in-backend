@@ -33,4 +33,5 @@ type CustomLinkController interface {
 	GetUserThumbnail(c *gin.Context)
 	UploadCustomThumbnail(c *gin.Context)
 	CheckShortLinkAvaibility(c *gin.Context)
+	RedirectLink(c *gin.Context)
 }

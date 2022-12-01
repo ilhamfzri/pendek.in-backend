@@ -20,9 +20,13 @@ type CustomLinkUpdateRequest struct {
 }
 
 type CustomLinkGetRequest struct {
-	LinkID string `uri:"link_id" binding:"required"`
+	LinkID uint `uri:"link_id" binding:"required"`
 }
 
-type CustomLinkCheckShortCodeRequest struct {
-	LinkID string `uri:"code" binding:"required"`
+type CustomLinkRedirectRequest struct {
+	ShortLinkCode string `uri:"short_link_code" binding:"required"`
+}
+
+type CustomLinkCheckShortCodeAvaibilityRequest struct {
+	Code string `form:"code" binding:"required,min=5,max=20"`
 }
