@@ -68,3 +68,14 @@ type CustomLinkRepository interface {
 	UpdateThumbnailIDFK(ctx context.Context, tx *gorm.DB, linkID uint, thumbnailID *uint) (domain.CustomLink, error)
 	UpdateCustomThumbnailIDFK(ctx context.Context, tx *gorm.DB, linkID uint, customThumbnailID *uint) (domain.CustomLink, error)
 }
+
+type CustomLinkInteractionRepository interface {
+	Create(ctx context.Context, tx *gorm.DB, linkInteraction domain.CustomLinkInteraction) error
+	FindByLinkIdAndDate(ctx context.Context, tx *gorm.DB, linkId int, date time.Time) ([]domain.CustomLinkInteraction, error)
+}
+
+type CustomLinkAnalyticRepository interface {
+	Create(ctx context.Context, tx *gorm.DB, customLinkAnalytic domain.CustomLinkAnalytic) (domain.CustomLinkAnalytic, error)
+	Update(ctx context.Context, tx *gorm.DB, customLinkAnalytic domain.CustomLinkAnalytic) (domain.CustomLinkAnalytic, error)
+	FindByLinkIDAndDate(ctx context.Context, tx *gorm.DB, customLinkID uint, date time.Time) (domain.CustomLinkAnalytic, error)
+}
