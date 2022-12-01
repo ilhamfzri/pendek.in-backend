@@ -6,22 +6,13 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
-	"github.com/ilhamfzri/pendek.in/app/logger"
 	"github.com/ilhamfzri/pendek.in/helper"
 	"github.com/ilhamfzri/pendek.in/internal/controller"
 	"github.com/ilhamfzri/pendek.in/internal/handler"
 	"github.com/ilhamfzri/pendek.in/internal/middleware"
-	"github.com/ilhamfzri/pendek.in/internal/repository"
-	"github.com/ilhamfzri/pendek.in/internal/service"
-	"gorm.io/gorm"
 )
 
-func AddUsersRoute(server *Server, DB *gorm.DB, logger *logger.Logger, jwt helper.IJwt) {
-
-	userRepository := repository.NewUserRepository(logger)
-	userService := service.NewUserService(userRepository, DB, logger, jwt)
-	userController := controller.NewUserController(userService, logger)
-
+func AddUsersRoute(server *Server, userController controller.UserController, jwt helper.IJwt) {
 	userRouteNotAuth := server.Router.Group("/v1/users")
 	{
 		userRouteNotAuth.POST("/sign-up", userController.Register)
@@ -55,5 +46,8 @@ func AddUsersRoute(server *Server, DB *gorm.DB, logger *logger.Logger, jwt helpe
 	{
 		userRouteResources.StaticFS("/pictures/", userResourceDirectory)
 	}
+
+	userRoutePublic := server.Router.Group("")
+	userRoutePublic.GET("/:username", userController.Profile)
 
 }

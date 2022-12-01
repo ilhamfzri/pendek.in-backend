@@ -25,3 +25,7 @@ type UserUpdateRequest struct {
 	FullName string `validate:"max=16" json:"full_name,omitempty"`
 	Bio      string `validate:"max=255" json:"bio,omitempty"`
 }
+
+type UserProfileRequest struct {
+	Username string `uri:"username" binding:"required,alphanum"`
+}

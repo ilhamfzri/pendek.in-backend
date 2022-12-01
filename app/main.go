@@ -10,7 +10,10 @@ import (
 	"github.com/ilhamfzri/pendek.in/app/router"
 	"github.com/ilhamfzri/pendek.in/config"
 	"github.com/ilhamfzri/pendek.in/helper"
+	"github.com/ilhamfzri/pendek.in/internal/controller"
 	"github.com/ilhamfzri/pendek.in/internal/handler"
+	"github.com/ilhamfzri/pendek.in/internal/repository"
+	"github.com/ilhamfzri/pendek.in/internal/service"
 )
 
 func main() {
@@ -60,14 +63,39 @@ func main() {
 	noRouteHandler := handler.NewNoRouteHandler()
 	server.Router.NoRoute(noRouteHandler)
 
+	//.- Repository Initialize
+	userRepository := repository.NewUserRepository(logger)
+	socialMediaTypeRepository := repository.NewSocialMediaTypeRepository(logger)
+	socialMediaLinkRepository := repository.NewSocialMediaLinkRepository(logger)
+	socialMediaInteractionRepository := repository.NewSocialMediaInteractionRepository(logger)
+	socialMediaAnalyticRepository := repository.NewSocialMediaAnalyticRepository(logger)
+	customLinkRepository := repository.NewCustomLinkRepository(logger)
+	customLinkAnalyticRepository := repository.NewCustomLinkAnalyticRepository(logger)
+	customLinkInteractionRepository := repository.NewCustomLinkInteractionRepository(logger)
+	customThumbnailRepository := repository.NewCustomThumbnailRepository(logger)
+	thumbnailRepository := repository.NewThumbnailRepository(logger)
+	deviceAnalyticRepository := repository.NewDeviceAnalyticRepository(logger)
+
+	//.- Service Initialize
+	userService := service.NewUserService(userRepository, db, logger, jwt)
+	socialMediaLinkService := service.NewSocialMediaLinkService(userRepository, socialMediaLinkRepository, socialMediaTypeRepository, db, logger, jwt)
+	socialMediaAnalyticsService := service.NewSocialMediaAnalyticService(userRepository, socialMediaLinkRepository, socialMediaInteractionRepository, socialMediaAnalyticRepository, deviceAnalyticRepository, db, logger, jwt)
+	customLinkService := service.NewCustomLinkService(customLinkRepository, customThumbnailRepository, thumbnailRepository, db, logger, jwt)
+	customLinkAnalyticService := service.NewCustomLinkAnalyticService(customLinkRepository, customLinkAnalyticRepository, customLinkInteractionRepository, deviceAnalyticRepository, db, logger, jwt)
+
+	//.- Controller Initialize
+	userController := controller.NewUserController(userService, socialMediaLinkService, customLinkService, logger)
+	socialMediaLinkController := controller.NewSocialMediaLink(socialMediaLinkService, socialMediaAnalyticsService, redis, logger)
+	customLinkController := controller.NewCustomLinkController(customLinkService, customLinkAnalyticService, redis, logger)
+
 	//.- User Router Initalize
-	router.AddUsersRoute(server, db, logger, jwt)
+	router.AddUsersRoute(server, userController, jwt)
 
 	//.- Social Media Router Initialize
-	router.AddSocialMediaRoute(server, db, redis, logger, jwt)
+	router.AddSocialMediaRoute(server, socialMediaLinkController, jwt)
 
 	//.- Custom Link Router Initialize
-	router.AddCustomLinkRoute(server, db, redis, logger, jwt)
+	router.AddCustomLinkRoute(server, customLinkController, jwt)
 
 	//.- Run Server
 	server.Run()

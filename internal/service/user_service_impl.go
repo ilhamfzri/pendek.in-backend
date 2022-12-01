@@ -283,3 +283,18 @@ func (service *UserServiceImpl) ChangeProfilePicture(ctx context.Context, imgByt
 
 	return nil
 }
+
+func (service *UserServiceImpl) GetProfileData(ctx context.Context, request web.UserProfileRequest) web.UserResponse {
+	// It's a transaction.
+	tx := service.DB.Begin()
+	defer helper.CommitOrRollback(tx)
+
+	// It's checking if the username is already used or not.
+	userData, repoErr := service.Repository.FindByUsername(ctx, tx, request.Username)
+	if repoErr == nil && !errors.Is(repoErr, gorm.ErrRecordNotFound) {
+		service.Logger.PanicIfErr(repoErr, ErrUserService)
+	}
+
+	userResponse := helper.UserDomainToResponse(&userData)
+	return userResponse
+}

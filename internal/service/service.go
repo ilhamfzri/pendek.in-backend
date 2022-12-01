@@ -14,6 +14,7 @@ type UserService interface {
 	EmailVerification(ctx context.Context, request web.UserEmailVerificationRequest) (web.UserResponse, error)
 	GenerateToken(ctx context.Context, jwtToken string) (web.TokenResponse, error)
 	ChangeProfilePicture(ctx context.Context, imgByte []byte, jwtToken string) error
+	GetProfileData(ctx context.Context, request web.UserProfileRequest) web.UserResponse
 }
 
 type SocialMediaLinkService interface {
@@ -22,6 +23,7 @@ type SocialMediaLinkService interface {
 	UpdateLink(ctx context.Context, request web.SocialMediaLinkUpdateRequest, host string, jwtToken string) (web.SocialMediaLinkResponse, error)
 	GetAllLink(ctx context.Context, host string, jwtToken string) ([]web.SocialMediaLinkResponse, error)
 	RedirectLink(ctx context.Context, request web.SocialMediaLinkRedirectRequest) (string, uint, error)
+	GetAllLinkProfile(ctx context.Context, domainName string, userID string, username string) []web.UserProfileSocialMediaResponse
 }
 
 type SocialMediaAnalytic interface {
@@ -40,6 +42,7 @@ type CustomLinkService interface {
 	UploadCustomThumbnail(ctx context.Context, imgData []byte, domainName string, jwtToken string) (web.ThumbnailResponse, error)
 	CheckShortLinkAvaibility(ctx context.Context, request web.CustomLinkCheckShortCodeAvaibilityRequest) error
 	RedirectLink(ctx context.Context, request web.CustomLinkRedirectRequest) (string, uint, error)
+	GetAllLinkProfile(ctx context.Context, domainName string, userID string, username string) []web.UserProfileCustomLinkResponse
 }
 
 type CustomLinkAnalyticService interface {

@@ -281,6 +281,7 @@ func (service *CustomLinkServiceImpl) GetLink(ctx context.Context, request web.C
 
 	customLinkResponse := helper.CustomLinkDomainToResponse(&customLink)
 	customLinkResponse.ThumbnailUrl = thumbnailUrl
+	customLinkResponse.RedirectLink = helper.GetCustomLinkUrl(domainName, customLink.ShortLinkCode)
 	return customLinkResponse, nil
 }
 
@@ -307,7 +308,7 @@ func (service *CustomLinkServiceImpl) GetAllLink(ctx context.Context, domainName
 		if customLink.CustomThumbnailID != nil {
 			customLinkResponse.ThumbnailUrl = helper.GetCustomThumbnailUrl(domainName, customLink.CustomThumbnail.ImageID)
 		}
-
+		customLinkResponse.RedirectLink = helper.GetCustomLinkUrl(domainName, customLink.ShortLinkCode)
 		customLinksResponse = append(customLinksResponse, customLinkResponse)
 	}
 	return customLinksResponse, nil
@@ -425,4 +426,37 @@ func (service *CustomLinkServiceImpl) RedirectLink(ctx context.Context, request 
 	}
 
 	return customLink.LongLink, customLink.ID, nil
+}
+
+func (service *CustomLinkServiceImpl) GetAllLinkProfile(ctx context.Context, domainName string, userID string, username string) []web.UserProfileCustomLinkResponse {
+	// It's a transaction.
+	tx := service.DB.Begin()
+	defer helper.CommitOrRollback(tx)
+
+	customLinks, errRepo := service.CustomLinkRepository.FetchAllByUserID(ctx, tx, userID)
+	if errRepo != nil && !errors.Is(errRepo, gorm.ErrRecordNotFound) {
+		service.Logger.PanicIfErr(errRepo, ErrCustomLinkService)
+	}
+
+	var userProfileCustomLinksResponse []web.UserProfileCustomLinkResponse
+	for _, customLink := range customLinks {
+		if !customLink.ShowOnProfile {
+			continue
+		}
+		userProfileCustomLinkResponse := web.UserProfileCustomLinkResponse{
+			Title: customLink.Title,
+			Link:  helper.GetCustomLinkUrl(domainName, customLink.ShortLinkCode),
+		}
+
+		if customLink.ThumbnailID != nil {
+			userProfileCustomLinkResponse.ThumbnailUrl = customLink.Thumbnail.IconUrl
+		}
+
+		if customLink.CustomThumbnailID != nil {
+			userProfileCustomLinkResponse.ThumbnailUrl = helper.GetCustomThumbnailUrl(domainName, customLink.CustomThumbnail.ImageID)
+		}
+
+		userProfileCustomLinksResponse = append(userProfileCustomLinksResponse, userProfileCustomLinkResponse)
+	}
+	return userProfileCustomLinksResponse
 }

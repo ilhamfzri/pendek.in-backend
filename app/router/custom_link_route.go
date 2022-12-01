@@ -6,29 +6,13 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
-	"github.com/go-redis/redis/v8"
-	"github.com/ilhamfzri/pendek.in/app/logger"
 	"github.com/ilhamfzri/pendek.in/helper"
 	"github.com/ilhamfzri/pendek.in/internal/controller"
 	"github.com/ilhamfzri/pendek.in/internal/handler"
 	"github.com/ilhamfzri/pendek.in/internal/middleware"
-	"github.com/ilhamfzri/pendek.in/internal/repository"
-	"github.com/ilhamfzri/pendek.in/internal/service"
-	"gorm.io/gorm"
 )
 
-func AddCustomLinkRoute(server *Server, DB *gorm.DB, redis *redis.Client, logger *logger.Logger, jwt helper.IJwt) {
-	customLinkRepository := repository.NewCustomLinkRepository(logger)
-	customLinkAnalyticRepository := repository.NewCustomLinkAnalyticRepository(logger)
-	customLinkInteractionRepository := repository.NewCustomLinkInteractionRepository(logger)
-	customThumbnailRepository := repository.NewCustomThumbnailRepository(logger)
-	thumbnailRepository := repository.NewThumbnailRepository(logger)
-	deviceAnalyticRepository := repository.NewDeviceAnalyticRepository(logger)
-
-	customLinkService := service.NewCustomLinkService(customLinkRepository, customThumbnailRepository, thumbnailRepository, DB, logger, jwt)
-	customLinkAnalyticService := service.NewCustomLinkAnalyticService(customLinkRepository, customLinkAnalyticRepository, customLinkInteractionRepository, deviceAnalyticRepository, DB, logger, jwt)
-	customLinkController := controller.NewCustomLinkController(customLinkService, customLinkAnalyticService, redis, logger)
-
+func AddCustomLinkRoute(server *Server, customLinkController controller.CustomLinkController, jwt helper.IJwt) {
 	jwtMiddleware := middleware.NewJwtMiddleware(jwt.GetSigningKey())
 	customLinkRouteAuth := server.Router.Group("/v1/link/custom")
 	customLinkRouteAuth.Use(jwtMiddleware)

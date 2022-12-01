@@ -12,6 +12,7 @@ type UserController interface {
 	EmailVerification(c *gin.Context)
 	GenerateToken(c *gin.Context)
 	ChangeProfilePicture(c *gin.Context)
+	Profile(c *gin.Context)
 }
 
 type SocialMediaLinkController interface {

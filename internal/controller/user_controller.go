@@ -14,16 +14,20 @@ import (
 )
 
 type UserControllerImpl struct {
-	Service service.UserService
-	Logger  *logger.Logger
+	Service            service.UserService
+	SocialMediaService service.SocialMediaLinkService
+	CustomLinkService  service.CustomLinkService
+	Logger             *logger.Logger
 }
 
 var ErrUserController = "[UserController] Failed To Execute"
 
-func NewUserController(service service.UserService, logger *logger.Logger) UserController {
+func NewUserController(service service.UserService, socialMediaService service.SocialMediaLinkService, costumLinkService service.CustomLinkService, logger *logger.Logger) UserController {
 	return &UserControllerImpl{
-		Service: service,
-		Logger:  logger,
+		Service:            service,
+		SocialMediaService: socialMediaService,
+		CustomLinkService:  costumLinkService,
+		Logger:             logger,
 	}
 }
 
@@ -219,4 +223,51 @@ func (controller *UserControllerImpl) ChangeProfilePicture(c *gin.Context) {
 		}
 		c.JSON(http.StatusOK, webResponse)
 	}
+}
+
+func (controller *UserControllerImpl) Profile(c *gin.Context) {
+	ctx := context.Background()
+	domainName := c.Request.Host
+	var request web.UserProfileRequest
+
+	err := c.ShouldBindUri(&request)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, helper.ToWebResponseFailed(err))
+		return
+	}
+
+	userResponse := controller.Service.GetProfileData(ctx, request)
+	if userResponse.ID == "" {
+		webResponse := web.WebResponseFailed{
+			Status:  "failed",
+			Message: "account not found",
+		}
+		c.JSON(http.StatusBadRequest, webResponse)
+	}
+
+	userProfileResponse := web.UserProfileResponse{}
+	userProfileResponse.Username = userResponse.Username
+	userProfileResponse.FullName = userResponse.FullName
+	userProfileResponse.Bio = userResponse.Bio
+	userProfileResponse.ProfilePic = userResponse.ProfilePic
+
+	controller.SocialMediaService.GetAllLinkProfile(ctx, domainName, userResponse.ID, userResponse.Username)
+	socialMediaResponse := controller.SocialMediaService.GetAllLinkProfile(ctx, domainName, userResponse.ID, userResponse.Username)
+	customLinkResponse := controller.CustomLinkService.GetAllLinkProfile(ctx, domainName, userResponse.ID, userResponse.Username)
+
+	if socialMediaResponse != nil {
+		userProfileResponse.SocialMedia = socialMediaResponse
+	}
+
+	if customLinkResponse != nil {
+		userProfileResponse.Link = customLinkResponse
+	}
+
+	webResponse := web.WebResponseSuccess{
+		Status:  "success",
+		Message: "success get account profile",
+		Data:    userProfileResponse,
+	}
+	c.JSON(http.StatusOK, webResponse)
+
 }

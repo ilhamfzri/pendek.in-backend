@@ -65,3 +65,7 @@ func GetCustomThumbnailUrl(domain string, imageID string) string {
 	thumbnailUrl := fmt.Sprintf("%s/%s/%s.jpg", domain, thumbnailResourceEndpointPath, imageID)
 	return thumbnailUrl
 }
+
+func GetCustomLinkUrl(domain string, shortLinkCode string) string {
+	return fmt.Sprintf("%s/l/%s", domain, shortLinkCode)
+}

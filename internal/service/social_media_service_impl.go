@@ -203,3 +203,29 @@ func (service *SocialMediaLinkServiceImpl) RedirectLink(ctx context.Context, req
 	linkResponse := helper.GenerateLinkResponse(socialMediaLink.SocialMediaType.Name, socialMediaLink.LinkOrUsername)
 	return linkResponse, socialMediaLink.ID, nil
 }
+
+func (service *SocialMediaLinkServiceImpl) GetAllLinkProfile(ctx context.Context, domainName string, userID string, username string) []web.UserProfileSocialMediaResponse {
+	//It's a transaction.
+	tx := service.DB.Begin()
+	socialMediaLinks, repoErr := service.SocialMediaLinkRepository.FindByUserID(ctx, tx, userID)
+
+	if repoErr != nil && !errors.Is(repoErr, gorm.ErrRecordNotFound) {
+		service.Logger.PanicIfErr(repoErr, ErrSocialMediaLinkService)
+	}
+
+	socialMediaLinksResponse := []web.UserProfileSocialMediaResponse{}
+	for _, socialMediaLink := range socialMediaLinks {
+		if !socialMediaLink.Activate {
+			continue
+		}
+
+		socialMediaLinkResponse := web.UserProfileSocialMediaResponse{
+			Name:    socialMediaLink.SocialMediaType.Name,
+			IconUrl: socialMediaLink.SocialMediaType.IconUrl,
+			Link:    helper.GenerateRedirectLink(domainName, username, socialMediaLink.SocialMediaType.Name),
+		}
+		socialMediaLinksResponse = append(socialMediaLinksResponse, socialMediaLinkResponse)
+	}
+
+	return socialMediaLinksResponse
+}
