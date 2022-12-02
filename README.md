@@ -22,13 +22,12 @@ Postman Page Link : [Click Here](https://documenter.getpostman.com/view/19656549
 ![alt text](doc-assets/db-diagram.png)
 
 ## Folder Structure
-## Folder Structure
 ```
 .
 ├── app
 │   ├── cache        // redis client
 │   ├── database     // orm client
-│   ├── logger       // logger client
+│   ├── logger       // logger clien
 │   ├── mail         // mail client
 │   ├── router       // endpoint management
 │   └── main.go
