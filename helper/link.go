@@ -9,6 +9,9 @@ import (
 
 var validate *validator.Validate
 
+var thumbnailResourceEndpointPath = "v1/resources/thumbnail"
+var profileResourceEndpointPath = "v1/resources/users/pictures"
+
 func GenerateRedirectLink(host string, username string, socialMediaName string) string {
 	socialMediaUrl := SocialMediaNameToUrlFormat(socialMediaName)
 	redirectLink := fmt.Sprintf("%s/%s/%s", host, username, socialMediaUrl)
@@ -68,4 +71,9 @@ func GetCustomThumbnailUrl(domain string, imageID string) string {
 
 func GetCustomLinkUrl(domain string, shortLinkCode string) string {
 	return fmt.Sprintf("%s/l/%s", domain, shortLinkCode)
+}
+
+func GetProfilePictureUrl(domain string, imageID string) string {
+	profileUrl := fmt.Sprintf("%s/%s/%s.jpg", domain, profileResourceEndpointPath, imageID)
+	return profileUrl
 }

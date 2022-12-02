@@ -249,7 +249,7 @@ func (controller *UserControllerImpl) Profile(c *gin.Context) {
 	userProfileResponse.Username = userResponse.Username
 	userProfileResponse.FullName = userResponse.FullName
 	userProfileResponse.Bio = userResponse.Bio
-	userProfileResponse.ProfilePic = userResponse.ProfilePic
+	userProfileResponse.ProfilePic = helper.GetProfilePictureUrl(domainName, userResponse.ProfilePic)
 
 	controller.SocialMediaService.GetAllLinkProfile(ctx, domainName, userResponse.ID, userResponse.Username)
 	socialMediaResponse := controller.SocialMediaService.GetAllLinkProfile(ctx, domainName, userResponse.ID, userResponse.Username)
@@ -270,4 +270,28 @@ func (controller *UserControllerImpl) Profile(c *gin.Context) {
 	}
 	c.JSON(http.StatusOK, webResponse)
 
+}
+
+func (controller *UserControllerImpl) GetCurrentProfile(c *gin.Context) {
+	ctx := context.Background()
+	jwtToken := helper.ExtractTokenFromRequestHeader(c)
+	domainName := c.Request.Host
+
+	userResponse, errService := controller.Service.GetCurrentProfile(ctx, jwtToken)
+	userResponse.ProfilePic = helper.GetProfilePictureUrl(domainName, userResponse.ProfilePic)
+
+	if errService != nil {
+		webResponse := web.WebResponseFailed{
+			Status:  "failed",
+			Message: errService.Error(),
+		}
+		c.JSON(http.StatusBadRequest, webResponse)
+	} else {
+		webResponse := web.WebResponseSuccess{
+			Status:  "success",
+			Message: "success get current profile",
+			Data:    userResponse,
+		}
+		c.JSON(http.StatusOK, webResponse)
+	}
 }

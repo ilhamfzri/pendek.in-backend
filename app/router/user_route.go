@@ -28,6 +28,7 @@ func AddUsersRoute(server *Server, userController controller.UserController, jwt
 		userRouteAuth.GET("/generate-token", userController.GenerateToken)
 		userRouteAuth.POST("/change-password", userController.ChangePassword)
 		userRouteAuth.PUT("/", userController.Update)
+		userRouteAuth.GET("/", userController.GetCurrentProfile)
 
 	}
 

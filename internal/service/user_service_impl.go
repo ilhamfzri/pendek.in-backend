@@ -277,7 +277,7 @@ func (service *UserServiceImpl) ChangeProfilePicture(ctx context.Context, imgByt
 	userDomain, errRepo := service.Repository.FindByEmail(ctx, tx, claims.Email)
 	service.Logger.PanicIfErr(errRepo, ErrUserService)
 
-	userDomain.ProfilePic = fileName
+	userDomain.ProfilePic = uuid
 	_, errRepo = service.Repository.Update(ctx, tx, userDomain)
 	service.Logger.PanicIfErr(errRepo, ErrUserService)
 
@@ -297,4 +297,23 @@ func (service *UserServiceImpl) GetProfileData(ctx context.Context, request web.
 
 	userResponse := helper.UserDomainToResponse(&userData)
 	return userResponse
+}
+
+func (service *UserServiceImpl) GetCurrentProfile(ctx context.Context, jwtToken string) (web.UserResponse, error) {
+	// It's getting the claims from the token.
+	claims := service.Jwt.GetClaims(jwtToken)
+
+	// It's a transaction.
+	tx := service.DB.Begin()
+	defer helper.CommitOrRollback(tx)
+
+	// It's checking if the username is already used or not.
+	userData, repoErr := service.Repository.FindByEmail(ctx, tx, claims.Email)
+	if repoErr == nil && !errors.Is(repoErr, gorm.ErrRecordNotFound) {
+		service.Logger.PanicIfErr(repoErr, ErrUserService)
+	}
+
+	userResponse := helper.UserDomainToResponse(&userData)
+	return userResponse, nil
+
 }

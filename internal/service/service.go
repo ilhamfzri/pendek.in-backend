@@ -15,6 +15,7 @@ type UserService interface {
 	GenerateToken(ctx context.Context, jwtToken string) (web.TokenResponse, error)
 	ChangeProfilePicture(ctx context.Context, imgByte []byte, jwtToken string) error
 	GetProfileData(ctx context.Context, request web.UserProfileRequest) web.UserResponse
+	GetCurrentProfile(ctx context.Context, jwtToken string) (web.UserResponse, error)
 }
 
 type SocialMediaLinkService interface {

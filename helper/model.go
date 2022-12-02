@@ -7,8 +7,6 @@ import (
 	"github.com/ilhamfzri/pendek.in/internal/model/web"
 )
 
-var thumbnailResourceEndpointPath = "v1/resources/thumbnail"
-
 func UserDomainToResponse(user *domain.User) web.UserResponse {
 	return web.UserResponse{
 		ID:         user.ID,

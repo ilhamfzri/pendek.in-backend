@@ -13,6 +13,7 @@ type UserController interface {
 	GenerateToken(c *gin.Context)
 	ChangeProfilePicture(c *gin.Context)
 	Profile(c *gin.Context)
+	GetCurrentProfile(c *gin.Context)
 }
 
 type SocialMediaLinkController interface {
