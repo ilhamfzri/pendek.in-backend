@@ -6,7 +6,7 @@ type SocialMediaTypeResponse struct {
 	ID      uint   `json:"id"`
 	Name    string `json:"name"`
 	Example string `json:"example"`
-	IconUrl string `json:"icon_url,omitempty"`
+	IconUrl string `json:"icon_url"`
 }
 
 type SocialMediaLinkResponse struct {

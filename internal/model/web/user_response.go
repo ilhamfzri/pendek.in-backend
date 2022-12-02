@@ -11,9 +11,9 @@ type UserResponse struct {
 
 type UserProfileResponse struct {
 	Username    string                           `json:"username"`
-	FullName    string                           `json:"full_name,omitempty"`
-	Bio         string                           `json:"bio,omitempty"`
-	ProfilePic  string                           `json:"profile_pic,omitempty"`
+	FullName    string                           `json:"full_name"`
+	Bio         string                           `json:"bio"`
+	ProfilePic  string                           `json:"profile_pic"`
 	SocialMedia []UserProfileSocialMediaResponse `json:"social_media"`
 	Link        []UserProfileCustomLinkResponse  `json:"link"`
 }

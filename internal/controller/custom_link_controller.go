@@ -16,7 +16,8 @@ import (
 	"github.com/ilhamfzri/pendek.in/internal/service"
 )
 
-var IntervalCustomLinkAnalyticCacheTime = 30 * time.Minute
+// var IntervalCustomLinkAnalyticCacheTime = 30 * time.Minute
+var IntervalCustomLinkAnalyticCacheTime = 1 * time.Second
 var ErrCustomLinkController = "[CustomLinkController] Failed To Execute"
 
 type CustomLinkControllerImpl struct {

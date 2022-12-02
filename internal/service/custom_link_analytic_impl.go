@@ -24,7 +24,8 @@ type CustomLinkAnalyticServiceImpl struct {
 }
 
 var (
-	IntervalDurationUpdateCustomLinkAnalytic = 1 * time.Hour // today analytic threshold duration, please set this to 1s in dev mode
+	// IntervalDurationUpdateCustomLinkAnalytic = 1 * time.Hour // today analytic threshold duration, please set this to 1s in dev mode
+	IntervalDurationUpdateCustomLinkAnalytic = 1 * time.Second // today analytic threshold duration, please set this to 1s in dev mode
 	ErrCustomLinkAnalyticService             = "[Custom Link Analytic Service] Failed to execute"
 	ErrCustomLinkAnalyticInvalidEndDate      = errors.New("end date value atleast today, not in the future")
 	ErrCustomLinkAnalyticInvalidStartDate    = errors.New("start date format invaled, start date up to last 30 days")

@@ -21,7 +21,8 @@ type SocialMediaLinkControllerImpl struct {
 	Logger          *logger.Logger
 }
 
-var IntervalSocialMediaAnalyticCacheTime = 30 * time.Minute
+// var IntervalSocialMediaAnalyticCacheTime = 30 * time.Minute
+var IntervalSocialMediaAnalyticCacheTime = 1 * time.Second
 
 func NewSocialMediaLink(service service.SocialMediaLinkService, analyticService service.SocialMediaAnalytic, redis *redis.Client, logger *logger.Logger) SocialMediaLinkController {
 	return &SocialMediaLinkControllerImpl{

@@ -124,6 +124,7 @@ func (service *CustomLinkServiceImpl) CreateLink(ctx context.Context, request we
 
 	customLinkResponse := helper.CustomLinkDomainToResponse(&customLink)
 	customLinkResponse.ThumbnailUrl = thumbnailUrl
+	customLinkResponse.RedirectLink = helper.GetCustomLinkUrl(domainName, customLink.ShortLinkCode)
 	return customLinkResponse, nil
 }
 
@@ -240,6 +241,7 @@ func (service *CustomLinkServiceImpl) UpdateLink(ctx context.Context, request we
 	service.Logger.PanicIfErr(errRepo, ErrCustomLinkService)
 
 	customLinkResponse := helper.CustomLinkDomainToResponse(&customLink)
+	customLinkResponse.RedirectLink = helper.GetCustomLinkUrl(domainName, customLink.ShortLinkCode)
 
 	if thumbnailUrl == "" {
 		if customLink.CustomThumbnailID != nil {
@@ -250,6 +252,7 @@ func (service *CustomLinkServiceImpl) UpdateLink(ctx context.Context, request we
 	}
 
 	customLinkResponse.ThumbnailUrl = thumbnailUrl
+	customLinkResponse.RedirectLink = helper.GetCustomLinkUrl(domainName, customLink.ShortLinkCode)
 	return customLinkResponse, nil
 }
 

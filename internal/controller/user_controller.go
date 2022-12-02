@@ -221,7 +221,7 @@ func (controller *UserControllerImpl) ChangeProfilePicture(c *gin.Context) {
 			Status:  "success",
 			Message: "success change profile picture",
 		}
-		c.JSON(http.StatusOK, webResponse)
+		c.JSON(http.StatusCreated, webResponse)
 	}
 }
 
@@ -249,7 +249,6 @@ func (controller *UserControllerImpl) Profile(c *gin.Context) {
 	userProfileResponse.Username = userResponse.Username
 	userProfileResponse.FullName = userResponse.FullName
 	userProfileResponse.Bio = userResponse.Bio
-	userProfileResponse.ProfilePic = helper.GetProfilePictureUrl(domainName, userResponse.ProfilePic)
 
 	controller.SocialMediaService.GetAllLinkProfile(ctx, domainName, userResponse.ID, userResponse.Username)
 	socialMediaResponse := controller.SocialMediaService.GetAllLinkProfile(ctx, domainName, userResponse.ID, userResponse.Username)
@@ -261,6 +260,10 @@ func (controller *UserControllerImpl) Profile(c *gin.Context) {
 
 	if customLinkResponse != nil {
 		userProfileResponse.Link = customLinkResponse
+	}
+
+	if userResponse.ProfilePic != "" {
+		userProfileResponse.ProfilePic = helper.GetProfilePictureUrl(domainName, userResponse.ProfilePic)
 	}
 
 	webResponse := web.WebResponseSuccess{
@@ -278,7 +281,10 @@ func (controller *UserControllerImpl) GetCurrentProfile(c *gin.Context) {
 	domainName := c.Request.Host
 
 	userResponse, errService := controller.Service.GetCurrentProfile(ctx, jwtToken)
-	userResponse.ProfilePic = helper.GetProfilePictureUrl(domainName, userResponse.ProfilePic)
+
+	if userResponse.ProfilePic != "" {
+		userResponse.ProfilePic = helper.GetProfilePictureUrl(domainName, userResponse.ProfilePic)
+	}
 
 	if errService != nil {
 		webResponse := web.WebResponseFailed{

@@ -25,7 +25,8 @@ type SocialMediaAnalyticServiceImpl struct {
 }
 
 var (
-	IntervalDurationUpdateAnalytic         = 1 * time.Hour // today analytic threshold duration
+	IntervalDurationUpdateAnalytic = 1 * time.Second // today analytic threshold duration
+	// IntervalDurationUpdateAnalytic         = 1 * time.Hour // today analytic threshold duration
 	ErrSocialMediaAnalyticService          = "[Social Media Analytic Service] Failed Execute Social Media Analytic Service"
 	ErrSocialMediaAnalyticInvalidEndDate   = errors.New("end date value atleast today, not in the future")
 	ErrSocialMediaAnalyticInvalidStartDate = errors.New("start date format invaled, start date up to last 30 days")
