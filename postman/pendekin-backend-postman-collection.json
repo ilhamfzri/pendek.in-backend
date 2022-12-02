@@ -1,0 +1,3445 @@
+{
+	"info": {
+		"_postman_id": "43672fae-fc60-4067-82ba-64de79c85bf1",
+		"name": "Pendek.In Backend API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "19656549"
+	},
+	"item": [
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "Sign-up",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"username\": \"urusername\",        \n    \"email\": \"uremail@mail.com\", \n    \"password\": \"urpassword\"         \n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/v1/users/sign-up",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"v1",
+								"users",
+								"sign-up"
+							]
+						},
+						"description": "If username or email is already registered, the API will return 400 Bad Request."
+					},
+					"response": [
+						{
+							"name": "201 Success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"username\": \"urusername\",        \n    \"email\": \"uremail@mail.com\", \n    \"password\": \"urpassword\"         \n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/v1/users/sign-up",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"v1",
+										"users",
+										"sign-up"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"success\",\n    \"message\": \"success create a new account\",\n    \"data\": {\n        \"id\": \"USER-ID\",\n        \"username\": \"urusername\",\n        \"email\": \"uremail@mail.com\",\n        \"profile_pic\": \"\"\n    }\n}"
+						},
+						{
+							"name": "400 Failed : Username Used",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"username\": \"urusername\",        \n    \"email\": \"uremail@mail.com\", \n    \"password\": \"urpassword\"         \n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/v1/users/sign-up",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"v1",
+										"users",
+										"sign-up"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"failed\",\n    \"message\":\"username is already used\"\n}"
+						},
+						{
+							"name": "400 Failed : Email Registered",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"username\": \"urusername\",        \n    \"email\": \"uremail@mail.com\", \n    \"password\": \"urpassword\"         \n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/v1/users/sign-up",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"v1",
+										"users",
+										"sign-up"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"failed\",\n    \"message\":\"email is already registered\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Email Verification",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\":\"uremail@mail.com\",\n    \"verification_code\":\"ABC123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/v1/users/email-verification",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"v1",
+								"users",
+								"email-verification"
+							]
+						},
+						"description": "After user sign-up, the API will send an email to user that contains verification code. Then input the verification code to this endpoint to activate the account."
+					},
+					"response": [
+						{
+							"name": "200 Success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"email\":\"ilhamfazri3rd@gmail.com\",\n    \"verification_code\":\"F27GA2\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/v1/users/email-verification",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"v1",
+										"users",
+										"email-verification"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"success\",\n    \"message\": \"successfully verified the email\",\n    \"data\": {\n        \"id\": \"2d12a421-c3f3-4dad-837f-f53d95558d43\",\n        \"username\": \"urusername\",\n        \"full_name\": \"Ur Full Name\",\n        \"bio\": \"Ur Bio\",\n        \"email\": \"uremail@mail.ugm.ac.id\",\n        \"profile_pic\": \"\"\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Login",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"uremail@mail.com\",    \n    \"password\": \"urpassword\"           \n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/v1/users/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"v1",
+								"users",
+								"login"
+							]
+						},
+						"description": "User login with this endpoint, the API will return access token as Bearer Token. User isn't verified need to be verified first using \"Email Verification\" endpoint"
+					},
+					"response": [
+						{
+							"name": "200 Success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"email\": \"uremail@mail.com\",    \n    \"password\": \"urpassword\"           \n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/v1/users/login",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"v1",
+										"users",
+										"login"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"success\",\n    \"message\": \"login success\",\n    \"data\": {\n        \"access_token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjJkMTJhNDIxLWMzZjMtNGRhZC04MzdmLWY1M2Q5NTU1OGQ0MyIsInVzZXJuYW1lIjoiaWxoYW1menJpIiwiZW1haWwiOiJpbGhhbWZhenJpM3JkQGdtYWlsLmNvbSIsImV4cCI6MTY3MjU2MDkxOCwiaXNzIjoiUGVuZGVrSW4gQVBJIn0.x2LDsErT-MC2P_escZFQp1DQqr-VCV2O7TmJdePzBBo\",\n        \"valid_until\": \"2023-01-01T15:15:18.176367+07:00\"\n    }\n}"
+						},
+						{
+							"name": "400 Failed : Email Isn't Registered",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"email\": \"uremail@mail.com\",    \n    \"password\": \"urpassword\"           \n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/v1/users/login",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"v1",
+										"users",
+										"login"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\":\"failed\",\n    \"message\":\"email isn't registered\"\n}"
+						},
+						{
+							"name": "400 Failed : Password Incorrect",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"email\": \"uremail@mail.com\",    \n    \"password\": \"urpassword\"           \n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/v1/users/login",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"v1",
+										"users",
+										"login"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\":\"failed\",\n    \"message\":\"password incorrect\"\n}"
+						},
+						{
+							"name": "403 Failed : Account Isn't Verified",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"email\": \"uremail@mail.com\",    \n    \"password\": \"urpassword\"           \n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/v1/users/login",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"v1",
+										"users",
+										"login"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"failed\",\n    \"message\": \"email isn't verified\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Change Password",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearer_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"current_password\": \"urcurrentpassword\", \n    \"new_password\": \"urnewpassword\"      \n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/v1/users/change-password",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"v1",
+								"users",
+								"change-password"
+							]
+						},
+						"description": "User can change his password using this endpoint. Make sure the current password is correct."
+					},
+					"response": [
+						{
+							"name": "200 Success",
+							"originalRequest": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjBjOTk1NTFmLTM1MzQtNDU1Mi05OWI2LTMyMjkxZjBmNzM1NCIsInVzZXJuYW1lIjoiaWxoYW1mYXpyaTNyZCIsImVtYWlsIjoiaWxoYW1mYXpyaTNyZEBnbWFpbC5jb20iLCJleHAiOjE2NzEzNTU5MjksImlzcyI6IlBlbmRla0luIEFQSSJ9.7oZ34NJiK4ITG4kI16c31hJHvFp7wRtIF46vNuAkv1U",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "",
+										"value": "",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"current_password\": \"urcurrentpassword\", \n    \"new_password\": \"urnewpassword\"      \n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/v1/users/change-password",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"v1",
+										"users",
+										"change-password"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n \"status\":\"success\",\n \"message\":\"success changed password\"\n}"
+						},
+						{
+							"name": "400 Failed : Current Password Incorrect",
+							"originalRequest": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjBjOTk1NTFmLTM1MzQtNDU1Mi05OWI2LTMyMjkxZjBmNzM1NCIsInVzZXJuYW1lIjoiaWxoYW1mYXpyaTNyZCIsImVtYWlsIjoiaWxoYW1mYXpyaTNyZEBnbWFpbC5jb20iLCJleHAiOjE2NzEzNTU5MjksImlzcyI6IlBlbmRla0luIEFQSSJ9.7oZ34NJiK4ITG4kI16c31hJHvFp7wRtIF46vNuAkv1U",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [
+									{
+										"key": "",
+										"value": "",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"current_password\": \"urcurrentpassword\", \n    \"new_password\": \"urnewpassword\"      \n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/v1/users/change-password",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"v1",
+										"users",
+										"change-password"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n \"status\":\"failed\",\n \"message\":\"current password incorrect\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Update Full Name Or Bio",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearer_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"full_name\":\"New User Full Name\",\n    \"bio\":\"New Bio\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/v1/users",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"v1",
+								"users"
+							]
+						},
+						"description": "User can update his Fullname or Bio using this endpoint. Please remove the json key if don't want to be updated."
+					},
+					"response": [
+						{
+							"name": "201 Success",
+							"originalRequest": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjBjOTk1NTFmLTM1MzQtNDU1Mi05OWI2LTMyMjkxZjBmNzM1NCIsInVzZXJuYW1lIjoiaWxoYW1mYXpyaTNyZCIsImVtYWlsIjoiaWxoYW1mYXpyaTNyZEBnbWFpbC5jb20iLCJleHAiOjE2NzEzNDg5NzAsImlzcyI6IlBlbmRla0luIEFQSSJ9.yR2UKkuZRAhUQI-g60shI9SU9xRpK6S31mlZOpd-298",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"full_name\":\"Ilham Fazri\",\n    \"bio\":\"Everthing Is Possible!\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/v1/users",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"v1",
+										"users"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"success\",\n    \"message\": \"success update user info\",\n    \"data\": {\n        \"id\": \"2d12a421-c3f3-4dad-837f-f53d95558d43\",\n        \"username\": \"urusername\",\n        \"full_name\": \"New User Full Name\",\n        \"bio\": \"New Bio\",\n        \"email\": \"uremail@mail.com\",\n        \"profile_pic\": \"\"\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Generate Request Token",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearer_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/v1/users/generate-token",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"v1",
+								"users",
+								"generate-token"
+							]
+						},
+						"description": "On login user will get access_token as Bearer token which will expire in 30 days. Before it expires, user can generate a new access_token using the current token."
+					},
+					"response": [
+						{
+							"name": "200 Success",
+							"originalRequest": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjBjOTk1NTFmLTM1MzQtNDU1Mi05OWI2LTMyMjkxZjBmNzM1NCIsInVzZXJuYW1lIjoiaWxoYW1mYXpyaTNyZCIsImVtYWlsIjoiaWxoYW1mYXpyaTNyZEBnbWFpbC5jb20iLCJleHAiOjE2NzEzNDg5NzAsImlzcyI6IlBlbmRla0luIEFQSSJ9.yR2UKkuZRAhUQI-g60shI9SU9xRpK6S31mlZOpd-298",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/v1/users/generate-token",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"v1",
+										"users",
+										"generate-token"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"success\",\n    \"message\": \"success create new request token\",\n    \"data\": {\n        \"access_token\": \"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjJkMTJhNDIxLWMzZjMtNGRhZC04MzdmLWY1M2Q5NTU1OGQ0MyIsInVzZXJuYW1lIjoiaWxoYW1menJpIiwiZW1haWwiOiJpbGhhbWZhenJpM3JkQGdtYWlsLmNvbSIsImV4cCI6MTY3MjU2MjQyMywiaXNzIjoiUGVuZGVrSW4gQVBJIn0.e40ZV62cnj27LpemeIu-Lvi2U-GZ5lvI0BpFJMVU-IY\",\n        \"valid_until\": \"2023-01-01T15:40:23.360622+07:00\"\n    }"
+						}
+					]
+				},
+				{
+					"name": "Change Profile Picture",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearer_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "image_data",
+									"type": "file",
+									"src": "/Users/hamz/Downloads/1661485943962.jpeg"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/v1/users/change-picture",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"v1",
+								"users",
+								"change-picture"
+							]
+						},
+						"description": "User can change his profile picture using this endpoint."
+					},
+					"response": [
+						{
+							"name": "201 Success",
+							"originalRequest": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImEwNWQwZGE3LWYwYTktNDk5MC1hMzI4LWQ3YWYwZTZiZmRiNCIsInVzZXJuYW1lIjoiaWxoYW1mYXpyaTNyZCIsImVtYWlsIjoiaWxoYW1mYXpyaTNyZEBnbWFpbC5jb20iLCJleHAiOjE2NzEzNTY3MzUsImlzcyI6IlBlbmRla0luIEFQSSJ9.eROZUr-H8rzoQ3hgVDXevN2SaGXM96caCXtsLHVUyEI",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "image_data",
+											"type": "file",
+											"src": "/Users/hamz/Downloads/2.jpg"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://localhost:8080/v1/users/change-picture",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"v1",
+										"users",
+										"change-picture"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"success\",\n    \"message\": \"success change profile picture\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Current User Info",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearer_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{base_url}}/v1/users",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"v1",
+								"users"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "200 Success",
+							"originalRequest": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6ImEwNWQwZGE3LWYwYTktNDk5MC1hMzI4LWQ3YWYwZTZiZmRiNCIsInVzZXJuYW1lIjoiaWxoYW1mYXpyaTNyZCIsImVtYWlsIjoiaWxoYW1mYXpyaTNyZEBnbWFpbC5jb20iLCJleHAiOjE2NzEzNTY3MzUsImlzcyI6IlBlbmRla0luIEFQSSJ9.eROZUr-H8rzoQ3hgVDXevN2SaGXM96caCXtsLHVUyEI",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/v1/users",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"v1",
+										"users"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json",
+									"name": "Content-Type",
+									"description": "",
+									"type": "text"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"success\",\n    \"message\": \"success get current profile\",\n    \"data\": {\n        \"id\": \"2d12a421-c3f3-4dad-837f-f53d95558d43\",\n        \"username\": \"urusername\",\n        \"full_name\": \"User Full Name\",\n        \"bio\": \"User Bio\",\n        \"email\": \"uremail@mail.com\",\n        \"profile_pic\": \"{{base_url}}/v1/resources/users/pictures/ae5ca8dd-a338-4be1-992c-03cff637d6b7.jpg\"\n    }\n}"
+						}
+					]
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Social Media Link",
+			"item": [
+				{
+					"name": "Get Social Media Link Types",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearer_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/v1/link/social-media/types",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"v1",
+								"link",
+								"social-media",
+								"types"
+							]
+						},
+						"description": "Get list of supported social media."
+					},
+					"response": [
+						{
+							"name": "200 Success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/v1/link/social-media/types",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"v1",
+										"link",
+										"social-media",
+										"types"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 02 Dec 2022 08:51:15 GMT"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"success\",\n    \"message\": \"success get all social media types\",\n    \"data\": [\n        {\n            \"id\": 1,\n            \"name\": \"Amazon\",\n            \"example\": \"https://amazon.com/shop/yourshopname\",\n            \"icon_url\": \"\"\n        },\n        {\n            \"id\": 2,\n            \"name\": \"Android Play Store\",\n            \"example\": \"https://play.google.com/store/apps/details?url=.com.yourapp.app\",\n            \"icon_url\": \"\"\n        },\n        {\n            \"id\": 3,\n            \"name\": \"Apple App Store\",\n            \"example\": \"https://apps.apple.com/us/yourapp/url12346\",\n            \"icon_url\": \"\"\n        },\n        {\n            \"id\": 4,\n            \"name\": \"Apple Music\",\n            \"example\": \"https://music.apple.com/us/album/youralbum\",\n            \"icon_url\": \"\"\n        },\n        {\n            \"id\": 5,\n            \"name\": \"Apple Podcast\",\n            \"example\": \"https://podcasts.apple.com/us/podcast/yourpodcast/123456\",\n            \"icon_url\": \"\"\n        },\n        {\n            \"id\": 6,\n            \"name\": \"Bandcamp\",\n            \"example\": \"https://you.bandcamp.com/\",\n            \"icon_url\": \"\"\n        },\n        {\n            \"id\": 7,\n            \"name\": \"BeReal\",\n            \"example\": \"https://bere.al/yourusername\",\n            \"icon_url\": \"\"\n        },\n        {\n            \"id\": 8,\n            \"name\": \"Cameo\",\n            \"example\": \"https://cameo.com/\",\n            \"icon_url\": \"\"\n        },\n        {\n            \"id\": 9,\n            \"name\": \"Clubhouse\",\n            \"example\": \"https://clubhouse.com/@profile\",\n            \"icon_url\": \"\"\n        },\n        {\n            \"id\": 10,\n            \"name\": \"Discord\",\n            \"example\": \"https://discord.com/invite/yourchannel\",\n            \"icon_url\": \"\"\n        },\n        {\n            \"id\": 11,\n            \"name\": \"Etsy\",\n            \"example\": \"https://www.etsy.com/shop/yourshop\",\n            \"icon_url\": \"\"\n        },\n        {\n            \"id\": 12,\n            \"name\": \"Facebook\",\n            \"example\": \"https://facebook.com/facebookpageurl\",\n            \"icon_url\": \"\"\n        },\n        {\n            \"id\": 13,\n            \"name\": \"Instagram\",\n            \"example\": \"@yourinstagramusername\",\n            \"icon_url\": \"\"\n        },\n        {\n            \"id\": 14,\n            \"name\": \"LinkedIn\",\n            \"example\": \"https://linkedin.com/in/username\",\n            \"icon_url\": \"\"\n        },\n        {\n            \"id\": 15,\n            \"name\": \"Patreon\",\n            \"example\": \"https://patreon.com/\",\n            \"icon_url\": \"\"\n        },\n        {\n            \"id\": 16,\n            \"name\": \"Payment\",\n            \"example\": \"https://venmo.com/yourusername\",\n            \"icon_url\": \"\"\n        },\n        {\n            \"id\": 17,\n            \"name\": \"Pinterest\",\n            \"example\": \"https://pinterest.com/\",\n            \"icon_url\": \"\"\n        },\n        {\n            \"id\": 18,\n            \"name\": \"Signal\",\n            \"example\": \"https://t.me/\",\n            \"icon_url\": \"\"\n        },\n        {\n            \"id\": 19,\n            \"name\": \"Snapchat\",\n            \"example\": \"https://www.snapchat.com/add/yourusername\",\n            \"icon_url\": \"\"\n        },\n        {\n            \"id\": 20,\n            \"name\": \"Soundcloud\",\n            \"example\": \"https://soundcloud.com/username\",\n            \"icon_url\": \"\"\n        },\n        {\n            \"id\": 21,\n            \"name\": \"Spotify\",\n            \"example\": \"https://open.spotify.com/artist/artistname\",\n            \"icon_url\": \"\"\n        },\n        {\n            \"id\": 22,\n            \"name\": \"Substack\",\n            \"example\": \"https://you.substack.com/\",\n            \"icon_url\": \"\"\n        },\n        {\n            \"id\": 23,\n            \"name\": \"Telegram\",\n            \"example\": \"https://t.me/\",\n            \"icon_url\": \"\"\n        },\n        {\n            \"id\": 24,\n            \"name\": \"Tiktok\",\n            \"example\": \"@tiktokusername\",\n            \"icon_url\": \"\"\n        },\n        {\n            \"id\": 25,\n            \"name\": \"Twitch\",\n            \"example\": \"https://twitch.tv/\",\n            \"icon_url\": \"\"\n        },\n        {\n            \"id\": 26,\n            \"name\": \"Twitter\",\n            \"example\": \"@yourtwitterusername\",\n            \"icon_url\": \"\"\n        },\n        {\n            \"id\": 27,\n            \"name\": \"Whatsapp\",\n            \"example\": \"+0000000000\",\n            \"icon_url\": \"\"\n        },\n        {\n            \"id\": 28,\n            \"name\": \"Youtube\",\n            \"example\": \"https://youtube.com/channel/youtubechannelurl\",\n            \"icon_url\": \"\"\n        },\n        {\n            \"id\": 29,\n            \"name\": \"Tokopedia\",\n            \"example\": \"https://www.tokopedia.com/yourstore\",\n            \"icon_url\": \"\"\n        },\n        {\n            \"id\": 30,\n            \"name\": \"Shopee\",\n            \"example\": \"https://shopee.co.id/yourstore\",\n            \"icon_url\": \"\"\n        }\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "Create Social Media Link",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearer_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"type_id\": 200,\n    \"link_or_username\": \"https://www.linkedin.com/in/testuser/\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/v1/link/social-media",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"v1",
+								"link",
+								"social-media"
+							]
+						},
+						"description": "To create social media link, set type_id value using the entries value from \"Get Social Media Link Types\" endpoint."
+					},
+					"response": [
+						{
+							"name": "200 Success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"type_id\": 14,\n    \"link_or_username\": \"https://www.linkedin.com/in/testuser/\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/v1/link/social-media",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"v1",
+										"link",
+										"social-media"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 02 Dec 2022 08:52:26 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "241"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"success\",\n    \"message\": \"success create social media link\",\n    \"data\": {\n        \"type_id\": 14,\n        \"social_media\": \"LinkedIn\",\n        \"link_or_username\": \"https://www.linkedin.com/in/testuser/\",\n        \"activate\": true,\n        \"redirect_link\": \"{{base_url}}/urusername/linkedin\"\n    }\n}"
+						},
+						{
+							"name": "400 Social Media Registered",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"type_id\": ,\n    \"link_or_username\": \"https://www.linkedin.com/in/ilhamfzri/\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/v1/link/social-media",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"v1",
+										"link",
+										"social-media"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 02 Dec 2022 08:54:03 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "90"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"failed\",\n    \"message\": \"social media link is registered, please use update instead\"\n}"
+						},
+						{
+							"name": "400 Username Or LInk Format Invalid",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"type_id\": {{social_media_id}},\n    \"link_or_username\": \"notvalid\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/v1/link/social-media",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"v1",
+										"link",
+										"social-media"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 02 Dec 2022 08:54:45 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "68"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"failed\",\n    \"message\": \"username or link format is not valid\"\n}"
+						},
+						{
+							"name": "400 Social Media Type Invalid",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"type_id\": 200,\n    \"link_or_username\": \"https://www.linkedin.com/in/testuser/\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/v1/link/social-media",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"v1",
+										"link",
+										"social-media"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 02 Dec 2022 08:59:58 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "60"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"failed\",\n    \"message\": \"social media type id invalid\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Get All Social Media Link",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearer_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/v1/link/social-media",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"v1",
+								"link",
+								"social-media"
+							]
+						},
+						"description": "This endpoint is used to get all social media links that have been registered."
+					},
+					"response": [
+						{
+							"name": "200 Success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/v1/link/social-media",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"v1",
+										"link",
+										"social-media"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 02 Dec 2022 09:00:46 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "383"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"success\",\n    \"message\": \"success get all social media types\",\n    \"data\": [\n        {\n            \"type_id\": 14,\n            \"social_media\": \"LinkedIn\",\n            \"link_or_username\": \"https://www.linkedin.com/in/testuser/\",\n            \"activate\": true,\n            \"redirect_link\": \"{{base_url}}/urusername/linkedin\"\n        },\n        {\n            \"type_id\": 26,\n            \"social_media\": \"Twitter\",\n            \"link_or_username\": \"testusertwitter\",\n            \"activate\": true,\n            \"redirect_link\": \"{{base_url}}/urusername/twitter\"\n        }\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "Update Social Media Link",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearer_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"new_link_or_username\":\"https://www.linkedin.com/in/newtestuser/\",\n    \"activate\":true\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/v1/link/social-media/:social_media_id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"v1",
+								"link",
+								"social-media",
+								":social_media_id"
+							],
+							"variable": [
+								{
+									"key": "social_media_id",
+									"value": "200",
+									"description": "social media type id"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "201 Success",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"new_link_or_username\":\"https://www.linkedin.com/in/newtestuser/\",\n    \"activate\":true\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/v1/link/social-media/:social_media_id",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"v1",
+										"link",
+										"social-media",
+										":social_media_id"
+									],
+									"variable": [
+										{
+											"key": "social_media_id",
+											"value": "14",
+											"description": "social media type id"
+										}
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 02 Dec 2022 09:08:46 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "243"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"success\",\n    \"message\": \"success update social media link\",\n    \"data\": {\n        \"type_id\": 14,\n        \"social_media\": \"LinkedIn\",\n        \"link_or_username\": \"https://www.linkedin.com/in/newtestuser/\",\n        \"activate\": true,\n        \"redirect_link\": \"{{base_url}}/urusername/linkedin\"\n    }\n}"
+						},
+						{
+							"name": "400 Social Media Type Invalid",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"new_link_or_username\":\"https://www.linkedin.com/in/newtestuser/\",\n    \"activate\":true\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/v1/link/social-media/:social_media_id",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"v1",
+										"link",
+										"social-media",
+										":social_media_id"
+									],
+									"variable": [
+										{
+											"key": "social_media_id",
+											"value": "200",
+											"description": "social media type id"
+										}
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 02 Dec 2022 09:09:10 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "60"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"failed\",\n    \"message\": \"social media type id invalid\"\n}"
+						}
+					]
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Social Media Analiytic",
+			"item": [
+				{
+					"name": "Get Social Media Analytic",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearer_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/v1/link/social-media/analytic?type_id=14&start_date=2022-11-30&end_date=2022-12-02",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"v1",
+								"link",
+								"social-media",
+								"analytic"
+							],
+							"query": [
+								{
+									"key": "type_id",
+									"value": "14",
+									"description": "social media type id"
+								},
+								{
+									"key": "start_date",
+									"value": "2022-11-30",
+									"description": "start date range, max 30 days before current date"
+								},
+								{
+									"key": "end_date",
+									"value": "2022-12-02",
+									"description": "end date range"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "200 Success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/v1/link/social-media/analytic?type_id=14&start_date=2022-11-30&end_date=2022-12-02",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"v1",
+										"link",
+										"social-media",
+										"analytic"
+									],
+									"query": [
+										{
+											"key": "type_id",
+											"value": "14",
+											"description": "social media type id"
+										},
+										{
+											"key": "start_date",
+											"value": "2022-11-30",
+											"description": "start date range, max 30 days before current date"
+										},
+										{
+											"key": "end_date",
+											"value": "2022-12-02",
+											"description": "end date range"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 02 Dec 2022 09:23:44 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "761"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"success\",\n    \"message\": \"success get social media link analytic\",\n    \"data\": [\n        {\n            \"social_media_link_id\": 5,\n            \"social_media_name\": \"LinkedIn\",\n            \"click_count\": 0,\n            \"view_count\": 0,\n            \"device_analytic\": {\n                \"mobile\": 0,\n                \"tablet\": 0,\n                \"desktop\": 0,\n                \"other\": 0\n            },\n            \"datetime\": \"2022-11-30\",\n            \"last_updated\": \"2022-12-02T16:13:01.277384+07:00\"\n        },\n        {\n            \"social_media_link_id\": 5,\n            \"social_media_name\": \"LinkedIn\",\n            \"click_count\": 0,\n            \"view_count\": 0,\n            \"device_analytic\": {\n                \"mobile\": 0,\n                \"tablet\": 0,\n                \"desktop\": 0,\n                \"other\": 0\n            },\n            \"datetime\": \"2022-12-01\",\n            \"last_updated\": \"2022-12-02T16:13:01.287572+07:00\"\n        },\n        {\n            \"social_media_link_id\": 5,\n            \"social_media_name\": \"LinkedIn\",\n            \"click_count\": 7,\n            \"view_count\": 0,\n            \"device_analytic\": {\n                \"mobile\": 2,\n                \"tablet\": 0,\n                \"desktop\": 5,\n                \"other\": 0\n            },\n            \"datetime\": \"2022-12-02\",\n            \"last_updated\": \"2022-12-02T16:23:44.890629+07:00\"\n        }\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Summary Social Media Analytic",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearer_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/v1/link/social-media/analytic/summary",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"v1",
+								"link",
+								"social-media",
+								"analytic",
+								"summary"
+							],
+							"query": [
+								{
+									"key": "",
+									"value": "",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "200 Success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/v1/link/social-media/analytic/summary",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"v1",
+										"link",
+										"social-media",
+										"analytic",
+										"summary"
+									],
+									"query": [
+										{
+											"key": "",
+											"value": "",
+											"disabled": true
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 02 Dec 2022 09:27:20 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "346"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"success\",\n    \"message\": \"success get social media link analytic summary\",\n    \"data\": {\n        \"social_media\": [\n            {\n                \"name\": \"LinkedIn\",\n                \"total_click_count\": 7,\n                \"total_view_count\": 0\n            },\n            {\n                \"name\": \"Twitter\",\n                \"total_click_count\": 14,\n                \"total_view_count\": 0\n            }\n        ],\n        \"device_analytic\": {\n            \"mobile\": 8,\n            \"tablet\": 0,\n            \"desktop\": 13,\n            \"other\": 0\n        },\n        \"last_updated\": \"2022-12-02T16:27:20.070362+07:00\"\n    }\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Custom Link",
+			"item": [
+				{
+					"name": "Get Default Thumbnail List",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearer_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/v1/link/custom/default-thumbnail-list",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"v1",
+								"link",
+								"custom",
+								"default-thumbnail-list"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "200 Success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/v1/link/custom/default-thumbnail-list",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"v1",
+										"link",
+										"custom",
+										"default-thumbnail-list"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 02 Dec 2022 10:25:11 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "211"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"success\",\n    \"message\": \"success get all default thumbnail\",\n    \"data\": [\n        {\n            \"id\": 1,\n            \"name\": \"Home\",\n            \"thumbnail_url\": \"http://localhost:8080/home\"\n        },\n        {\n            \"id\": 2,\n            \"name\": \"Work\",\n            \"thumbnail_url\": \"http://localhost:8080/work\"\n        }\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "Upload User Custom Thumbnail",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearer_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "image_data",
+									"type": "file",
+									"src": "/Users/hamz/Downloads/1percentbetter.jpg"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/v1/link/custom/upload-thumbnail",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"v1",
+								"link",
+								"custom",
+								"upload-thumbnail"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "201 Success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "image_data",
+											"type": "file",
+											"src": "/Users/hamz/Downloads/1percentbetter.jpg"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://localhost:8080/v1/link/custom/upload-thumbnail",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"v1",
+										"link",
+										"custom",
+										"upload-thumbnail"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 02 Dec 2022 10:31:12 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "177"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"success\",\n    \"message\": \"success upload custom thumbnail\",\n    \"data\": {\n        \"id\": 4,\n        \"thumbnail_url\": \"localhost:8080/v1/resources/thumbnail/64a41044-cab1-4958-82e2-7c689d23b43c.jpg\"\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Get User Thumbnail List",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearer_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/v1/link/custom/user-thumbnail-list",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"v1",
+								"link",
+								"custom",
+								"user-thumbnail-list"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "200 Success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/v1/link/custom/user-thumbnail-list",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"v1",
+										"link",
+										"custom",
+										"user-thumbnail-list"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 02 Dec 2022 10:32:07 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "185"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"success\",\n    \"message\": \"success get all user custom thumbnail\",\n    \"data\": [\n        {\n            \"id\": 4,\n            \"thumbnail_url\": \"localhost:8080/v1/resources/thumbnail/64a41044-cab1-4958-82e2-7c689d23b43c.jpg\"\n        }\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "Create Custom Link",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearer_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\":\"Playlist For Study\",\n    \"short_link_code\":\"studyMe01\",\n    \"long_link\": \"https://www.youtube.com/watch?v=jfKfPfyJRdk\",\n    \"user_thumbnail_id\":4\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/v1/link/custom",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"v1",
+								"link",
+								"custom"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "201 Success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"title\":\"Headphones Kid Meme\",\n    \"short_link_code\":\"asW1sD\",\n    \"long_link\": \"https://www.youtube.com/watch?v=l2Gl6icqPdI\"\n\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/v1/link/custom",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"v1",
+										"link",
+										"custom"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 02 Dec 2022 10:01:38 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "245"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"success\",\n    \"message\": \"success create new link\",\n    \"data\": {\n        \"id\": 8,\n        \"title\": \"Headphones Kid Meme\",\n        \"short_link_code\": \"asW1sD\",\n        \"long_link\": \"https://www.youtube.com/watch?v=l2Gl6icqPdI\",\n        \"redirect_link\": \"\",\n        \"show_on_profile\": true,\n        \"activate\": true\n    }\n}"
+						},
+						{
+							"name": "201 Success - Use Default Thumbnail",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"title\":\"Chill Music\",\n    \"short_link_code\":\"chillMusic01\",\n    \"long_link\": \"https://www.youtube.com/watch?v=jfKfPfyJRdk\",\n    \"thumbnail_id\":1\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/v1/link/custom",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"v1",
+										"link",
+										"custom"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 02 Dec 2022 10:29:00 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "306"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"success\",\n    \"message\": \"success create new link\",\n    \"data\": {\n        \"id\": 10,\n        \"title\": \"Chill Music\",\n        \"short_link_code\": \"chillMusic01\",\n        \"long_link\": \"https://www.youtube.com/watch?v=jfKfPfyJRdk\",\n        \"redirect_link\": \"\",\n        \"show_on_profile\": true,\n        \"activate\": true,\n        \"thumbnail_id\": 1,\n        \"thumbnail_url\": \"http://localhost:8080/home\"\n    }\n}"
+						},
+						{
+							"name": "201 Success - Use Custom Thumbnail",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"title\":\"Playlist For Study\",\n    \"short_link_code\":\"studyMe01\",\n    \"long_link\": \"https://www.youtube.com/watch?v=jfKfPfyJRdk\",\n    \"user_thumbnail_id\":4\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/v1/link/custom",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"v1",
+										"link",
+										"custom"
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 02 Dec 2022 10:35:33 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "369"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"success\",\n    \"message\": \"success create new link\",\n    \"data\": {\n        \"id\": 11,\n        \"title\": \"Playlist For Study\",\n        \"short_link_code\": \"studyMe01\",\n        \"long_link\": \"https://www.youtube.com/watch?v=jfKfPfyJRdk\",\n        \"redirect_link\": \"\",\n        \"show_on_profile\": true,\n        \"activate\": true,\n        \"custom_thumbnail_id\": 4,\n        \"thumbnail_url\": \"localhost:8080/v1/resources/thumbnail/64a41044-cab1-4958-82e2-7c689d23b43c.jpg\"\n    }\n}"
+						},
+						{
+							"name": "400 Short Link Code Is Registered",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"title\":\"Chill Music\",\n    \"short_link_code\":\"aHa123\",\n    \"long_link\": \"https://www.youtube.com/watch?v=jfKfPfyJRdk\",\n    \"thumbnail_id\":1\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/v1/link/custom",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"v1",
+										"link",
+										"custom"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 02 Dec 2022 10:27:54 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "61"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"failed\",\n    \"message\": \"short_link_code is registered\"\n}"
+						},
+						{
+							"name": "400 Thumbnail Id Invalid",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"title\":\"Chill Music\",\n    \"short_link_code\":\"chillMusic01\",\n    \"long_link\": \"https://www.youtube.com/watch?v=jfKfPfyJRdk\",\n    \"thumbnail_id\":2005\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/v1/link/custom",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"v1",
+										"link",
+										"custom"
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 02 Dec 2022 10:32:49 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "89"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"failed\",\n    \"message\": \"thumbnail_id invalid, make sure thumbnail_id is available\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Get All Custom Link",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearer_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/v1/link/custom",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"v1",
+								"link",
+								"custom"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "200 Success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/v1/link/custom",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"v1",
+										"link",
+										"custom"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 02 Dec 2022 10:14:11 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "478"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"success\",\n    \"message\": \"success get all custom link\",\n    \"data\": [\n        {\n            \"id\": 8,\n            \"title\": \"Headphones Kid Meme\",\n            \"short_link_code\": \"asW1sD\",\n            \"long_link\": \"https://www.youtube.com/watch?v=l2Gl6icqPdI\",\n            \"redirect_link\": \"localhost:8080/l/asW1sD\",\n            \"show_on_profile\": true,\n            \"activate\": true\n        },\n        {\n            \"id\": 9,\n            \"title\": \"Lesty Sayang Rizky\",\n            \"short_link_code\": \"aHa123\",\n            \"long_link\": \"https://www.youtube.com/watch?v=-6Kt7wqguAI\",\n            \"redirect_link\": \"localhost:8080/l/aHa123\",\n            \"show_on_profile\": true,\n            \"activate\": true\n        }\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Custom Link",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearer_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/v1/link/custom/:link_id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"v1",
+								"link",
+								"custom",
+								":link_id"
+							],
+							"variable": [
+								{
+									"key": "link_id",
+									"value": "25"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "200 Success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/v1/link/custom/:link_id",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"v1",
+										"link",
+										"custom",
+										":link_id"
+									],
+									"variable": [
+										{
+											"key": "link_id",
+											"value": "9"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 02 Dec 2022 10:22:58 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "260"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"success\",\n    \"message\": \"success get link\",\n    \"data\": {\n        \"id\": 9,\n        \"title\": \"Lesty Sayang Rizky\",\n        \"short_link_code\": \"aHa123\",\n        \"long_link\": \"https://www.youtube.com/watch?v=-6Kt7wqguAI\",\n        \"redirect_link\": \"localhost:8080/l/aHa123\",\n        \"show_on_profile\": true,\n        \"activate\": true\n    }\n}"
+						},
+						{
+							"name": "400 Link Is Not Registered",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/v1/link/custom/:link_id",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"v1",
+										"link",
+										"custom",
+										":link_id"
+									],
+									"variable": [
+										{
+											"key": "link_id",
+											"value": "25"
+										}
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 02 Dec 2022 10:24:03 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "54"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"failed\",\n    \"message\": \"link is not registered\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Update Custom Link",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearer_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\":\"My Playlist Dec 2022\",\n    \"short_link_code\":\"myPlaylistDec2022\",\n    \"long_link\":\"https://www.youtube.com/watch?v=IGvz6KpxXKY&t=1572s\",\n    \"show_on_profile\":false,\n    \"activate\":true\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/v1/link/custom/:link_id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"v1",
+								"link",
+								"custom",
+								":link_id"
+							],
+							"variable": [
+								{
+									"key": "link_id",
+									"value": "11"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "201 Success",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"title\":\"My Playlist Dec 2022\",\n    \"short_link_code\":\"myPlaylistDec2022\",\n    \"long_link\":\"https://www.youtube.com/watch?v=IGvz6KpxXKY&t=1572s\",\n    \"show_on_profile\":false,\n    \"activate\":true\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/v1/link/custom/:link_id",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"v1",
+										"link",
+										"custom",
+										":link_id"
+									],
+									"variable": [
+										{
+											"key": "link_id",
+											"value": "11"
+										}
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 02 Dec 2022 10:39:11 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "353"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"success\",\n    \"message\": \"success update link\",\n    \"data\": {\n        \"id\": 11,\n        \"title\": \"My Playlist Dec 2022\",\n        \"short_link_code\": \"myPlaylistDec2022\",\n        \"long_link\": \"https://www.youtube.com/watch?v=IGvz6KpxXKY&t=1572s\",\n        \"redirect_link\": \"localhost:8080/l/myPlaylistDec2022\",\n        \"show_on_profile\": false,\n        \"activate\": true,\n        \"custom_thumbnail_id\": 4,\n        \"thumbnail_url\": \"localhost:8080/v1/resources/thumbnail/.jpg\"\n    }\n}"
+						},
+						{
+							"name": "201 Success - Change Using Default Thumbnail",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"thumbnail_id\":1\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/v1/link/custom/:link_id",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"v1",
+										"link",
+										"custom",
+										":link_id"
+									],
+									"variable": [
+										{
+											"key": "link_id",
+											"value": "11"
+										}
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 02 Dec 2022 10:40:44 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "330"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"success\",\n    \"message\": \"success update link\",\n    \"data\": {\n        \"id\": 11,\n        \"title\": \"My Playlist Dec 2022\",\n        \"short_link_code\": \"myPlaylistDec2022\",\n        \"long_link\": \"https://www.youtube.com/watch?v=IGvz6KpxXKY&t=1572s\",\n        \"redirect_link\": \"\",\n        \"show_on_profile\": false,\n        \"activate\": true,\n        \"thumbnail_id\": 1,\n        \"thumbnail_url\": \"http://localhost:8080/home\"\n    }\n}"
+						},
+						{
+							"name": "201 Success - Change Using Custom Thumbnail",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"user_thumbnail_id\":4\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/v1/link/custom/:link_id",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"v1",
+										"link",
+										"custom",
+										":link_id"
+									],
+									"variable": [
+										{
+											"key": "link_id",
+											"value": "11"
+										}
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 02 Dec 2022 10:45:29 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "423"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"success\",\n    \"message\": \"success update link\",\n    \"data\": {\n        \"id\": 11,\n        \"title\": \"My Playlist Dec 2022\",\n        \"short_link_code\": \"myPlaylistDec2022\",\n        \"long_link\": \"https://www.youtube.com/watch?v=IGvz6KpxXKY&t=1572s\",\n        \"redirect_link\": \"localhost:8080/l/myPlaylistDec2022\",\n        \"show_on_profile\": false,\n        \"activate\": true,\n        \"custom_thumbnail_id\": 4,\n        \"thumbnail_url\": \"localhost:8080/v1/resources/thumbnail/64a41044-cab1-4958-82e2-7c689d23b43c.jpg\"\n    }\n}"
+						},
+						{
+							"name": "201 Success - Remove Thumbnail",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"user_thumbnail_id\":0,\n    \"thumbnail_id\":0\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{base_url}}/v1/link/custom/:link_id",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"v1",
+										"link",
+										"custom",
+										":link_id"
+									],
+									"variable": [
+										{
+											"key": "link_id",
+											"value": "11"
+										}
+									]
+								}
+							},
+							"status": "Created",
+							"code": 201,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 02 Dec 2022 10:48:09 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "302"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"success\",\n    \"message\": \"success update link\",\n    \"data\": {\n        \"id\": 11,\n        \"title\": \"My Playlist Dec 2022\",\n        \"short_link_code\": \"myPlaylistDec2022\",\n        \"long_link\": \"https://www.youtube.com/watch?v=IGvz6KpxXKY&t=1572s\",\n        \"redirect_link\": \"localhost:8080/l/myPlaylistDec2022\",\n        \"show_on_profile\": false,\n        \"activate\": true\n    }\n}"
+						},
+						{
+							"name": "400 User Thumbnail ID Invalid",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"user_thumbnail_id\":20\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/v1/link/custom/:link_id",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"v1",
+										"link",
+										"custom",
+										":link_id"
+									],
+									"variable": [
+										{
+											"key": "link_id",
+											"value": "11"
+										}
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 02 Dec 2022 10:44:57 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "99"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"failed\",\n    \"message\": \"user_thumbnail_id invalid, make sure user_thumbnail_id is available\"\n}"
+						},
+						{
+							"name": "400 Link Is Not Registered",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"user_thumbnail_id\":4\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8080/v1/link/custom/:link_id",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"v1",
+										"link",
+										"custom",
+										":link_id"
+									],
+									"variable": [
+										{
+											"key": "link_id",
+											"value": "999"
+										}
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 02 Dec 2022 10:46:39 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "54"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"failed\",\n    \"message\": \"link is not registered\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Check Short Link Code Avaibility",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjJkMTJhNDIxLWMzZjMtNGRhZC04MzdmLWY1M2Q5NTU1OGQ0MyIsInVzZXJuYW1lIjoiaWxoYW1menJpIiwiZW1haWwiOiJpbGhhbWZhenJpM3JkQGdtYWlsLmNvbSIsImV4cCI6MTY3MjMzMzExNywiaXNzIjoiUGVuZGVrSW4gQVBJIn0.E48B4jFE1XBbZQ9C7nYIO2AX4yXLrh_zjGqXbleQwh4",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/v1/link/custom/check-short-code?code=heiw22ewqe",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"v1",
+								"link",
+								"custom",
+								"check-short-code"
+							],
+							"query": [
+								{
+									"key": "code",
+									"value": "heiw22ewqe"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "200 Success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/v1/link/custom/check-short-code?code=heiw22ewqe",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"v1",
+										"link",
+										"custom",
+										"check-short-code"
+									],
+									"query": [
+										{
+											"key": "code",
+											"value": "heiw22ewqe"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 02 Dec 2022 10:51:07 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "60"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"success\",\n    \"message\": \"short link code can be used\"\n}"
+						},
+						{
+							"name": "400 Short Link Code Registered",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/v1/link/custom/check-short-code?code=heiw22",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"v1",
+										"link",
+										"custom",
+										"check-short-code"
+									],
+									"query": [
+										{
+											"key": "code",
+											"value": "heiw22"
+										}
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 02 Dec 2022 10:50:15 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "61"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"failed\",\n    \"message\": \"short_link_code is registered\"\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Custom Link Analyitic",
+			"item": [
+				{
+					"name": "Get Custom Link Analytic",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearer_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/v1/link/custom/analytic?link_id=9&start_date=2022-12-02&end_date=2022-12-02",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"v1",
+								"link",
+								"custom",
+								"analytic"
+							],
+							"query": [
+								{
+									"key": "link_id",
+									"value": "9"
+								},
+								{
+									"key": "start_date",
+									"value": "2022-12-02"
+								},
+								{
+									"key": "end_date",
+									"value": "2022-12-02"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "200 Success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/v1/link/custom/analytic?link_id=9&start_date=2022-12-02&end_date=2022-12-02",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"v1",
+										"link",
+										"custom",
+										"analytic"
+									],
+									"query": [
+										{
+											"key": "link_id",
+											"value": "9"
+										},
+										{
+											"key": "start_date",
+											"value": "2022-12-02"
+										},
+										{
+											"key": "end_date",
+											"value": "2022-12-02"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 02 Dec 2022 10:56:50 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "250"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"success\",\n    \"message\": \"success get link analytic\",\n    \"data\": [\n        {\n            \"link_id\": 9,\n            \"click_count\": 4,\n            \"view_count\": 0,\n            \"device_analytic\": {\n                \"mobile\": 1,\n                \"tablet\": 0,\n                \"desktop\": 3,\n                \"other\": 0\n            },\n            \"datetime\": \"2022-12-02\",\n            \"last_updated\": \"2022-12-02T17:56:49.998489+07:00\"\n        }\n    ]\n}"
+						},
+						{
+							"name": "400 Link Is Not Registered",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/v1/link/custom/analytic?link_id=6&start_date=2022-11-29&end_date=2022-12-01",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"v1",
+										"link",
+										"custom",
+										"analytic"
+									],
+									"query": [
+										{
+											"key": "link_id",
+											"value": "6"
+										},
+										{
+											"key": "start_date",
+											"value": "2022-11-29"
+										},
+										{
+											"key": "end_date",
+											"value": "2022-12-01"
+										}
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 02 Dec 2022 10:52:07 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "54"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"failed\",\n    \"message\": \"link is not registered\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Get Summary Custom Link Analytic",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{bearer_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/v1/link/custom/analytic/summary",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"v1",
+								"link",
+								"custom",
+								"analytic",
+								"summary"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "200 Success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/v1/link/custom/analytic/summary",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"v1",
+										"link",
+										"custom",
+										"analytic",
+										"summary"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 02 Dec 2022 10:58:48 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "428"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"success\",\n    \"message\": \"success get link analytic summary\",\n    \"data\": {\n        \"link\": [\n            {\n                \"link_id\": 8,\n                \"total_click_count\": 1,\n                \"total_view_count\": 0\n            },\n            {\n                \"link_id\": 9,\n                \"total_click_count\": 4,\n                \"total_view_count\": 0\n            },\n            {\n                \"link_id\": 10,\n                \"total_click_count\": 0,\n                \"total_view_count\": 0\n            },\n            {\n                \"link_id\": 11,\n                \"total_click_count\": 0,\n                \"total_view_count\": 0\n            }\n        ],\n        \"device_analytic\": {\n            \"mobile\": 1,\n            \"tablet\": 0,\n            \"desktop\": 4,\n            \"other\": 0\n        },\n        \"last_updated\": \"2022-12-02T17:58:48.581406+07:00\"\n    }\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Public",
+			"item": [
+				{
+					"name": "Get User Profile",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/:username",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								":username"
+							],
+							"variable": [
+								{
+									"key": "username",
+									"value": "urusername"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "200 Success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/:username",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										":username"
+									],
+									"variable": [
+										{
+											"key": "username",
+											"value": "urusername"
+										}
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 02 Dec 2022 11:06:18 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "619"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"success\",\n    \"message\": \"success get account profile\",\n    \"data\": {\n        \"username\": \"urusername\",\n        \"full_name\": \"New User Full Name\",\n        \"bio\": \"New Bio\",\n        \"profile_pic\": \"localhost:8080/v1/resources/users/pictures/1bfcf995-f830-4eab-a618-0c99d4c020a1.jpg\",\n        \"social_media\": [\n            {\n                \"name\": \"Twitter\",\n                \"link\": \"localhost:8080/urusername/twitter\",\n                \"icon_url\": \"\"\n            }\n        ],\n        \"link\": [\n            {\n                \"title\": \"Headphones Kid Meme\",\n                \"link\": \"localhost:8080/l/asW1sD\",\n                \"thumbnail_url\": \"\"\n            },\n            {\n                \"title\": \"Lesty Sayang Rizky\",\n                \"link\": \"localhost:8080/l/aHa123\",\n                \"thumbnail_url\": \"\"\n            },\n            {\n                \"title\": \"Chill Music\",\n                \"link\": \"localhost:8080/l/chillMusic01\",\n                \"thumbnail_url\": \"http://localhost:8080/home\"\n            }\n        ]\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Redirect Custom Link",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/l/:short_link_code",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"l",
+								":short_link_code"
+							],
+							"variable": [
+								{
+									"key": "short_link_code",
+									"value": "aSaAss"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "400 Link Is Invalid",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/l/:short_link_code",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										"l",
+										":short_link_code"
+									],
+									"variable": [
+										{
+											"key": "short_link_code",
+											"value": "aSaAss"
+										}
+									]
+								}
+							},
+							"status": "Bad Request",
+							"code": 400,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Content-Type",
+									"value": "application/json; charset=utf-8"
+								},
+								{
+									"key": "Date",
+									"value": "Fri, 02 Dec 2022 11:07:07 GMT"
+								},
+								{
+									"key": "Content-Length",
+									"value": "47"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"failed\",\n    \"message\": \"link is invalid\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Redirect Social Media Link",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/:username/:social_media_name",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								":username",
+								":social_media_name"
+							],
+							"variable": [
+								{
+									"key": "username",
+									"value": "nousername"
+								},
+								{
+									"key": "social_media_name",
+									"value": "no-social-media"
+								}
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "400 Link Is Invalid",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8080/:username/:social_media_name",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8080",
+									"path": [
+										":username",
+										":social_media_name"
+									],
+									"variable": [
+										{
+											"key": "username",
+											"value": "nousername"
+										},
+										{
+											"key": "social_media_name",
+											"value": "no-social-media"
+										}
+									]
+								}
+							},
+							"_postman_previewlanguage": null,
+							"header": null,
+							"cookie": [],
+							"body": null
+						}
+					]
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8080",
+			"type": "string"
+		},
+		{
+			"key": "bearer_token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "social_media_id",
+			"value": "",
+			"type": "string"
+		}
+	]
+}
