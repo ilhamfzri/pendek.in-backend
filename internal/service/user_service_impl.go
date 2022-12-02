@@ -13,6 +13,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/ilhamfzri/pendek.in/app/logger"
+	"github.com/ilhamfzri/pendek.in/app/mail"
 	"github.com/ilhamfzri/pendek.in/helper"
 	"github.com/ilhamfzri/pendek.in/internal/model/domain"
 	"github.com/ilhamfzri/pendek.in/internal/model/web"
@@ -23,14 +24,16 @@ import (
 
 type UserServiceImpl struct {
 	Repository repository.UserRepository
+	MailClient *mail.MailClient
 	DB         *gorm.DB
 	Logger     *logger.Logger
 	Jwt        helper.IJwt
 }
 
-func NewUserService(repository repository.UserRepository, DB *gorm.DB, logger *logger.Logger, jwt helper.IJwt) UserService {
+func NewUserService(repository repository.UserRepository, mailClient *mail.MailClient, DB *gorm.DB, logger *logger.Logger, jwt helper.IJwt) UserService {
 	return &UserServiceImpl{
 		Repository: repository,
+		MailClient: mailClient,
 		DB:         DB,
 		Logger:     logger,
 		Jwt:        jwt,
@@ -92,6 +95,9 @@ func (service *UserServiceImpl) Register(ctx context.Context, request web.UserRe
 	// It's creating a new user and assign it to user variable.
 	user, repoErr = service.Repository.Create(ctx, tx, user)
 	service.Logger.PanicIfErr(repoErr, ErrUserService)
+
+	errMail := service.MailClient.SendVerificationEmail(user.Email, verificationCode)
+	service.Logger.PanicIfErr(errMail, ErrUserService)
 
 	webResponse := helper.UserDomainToResponse(&user)
 	return webResponse, nil

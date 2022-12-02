@@ -7,6 +7,7 @@ import (
 	"github.com/ilhamfzri/pendek.in/app/cache"
 	"github.com/ilhamfzri/pendek.in/app/database"
 	"github.com/ilhamfzri/pendek.in/app/logger"
+	"github.com/ilhamfzri/pendek.in/app/mail"
 	"github.com/ilhamfzri/pendek.in/app/router"
 	"github.com/ilhamfzri/pendek.in/config"
 	"github.com/ilhamfzri/pendek.in/helper"
@@ -51,6 +52,10 @@ func main() {
 	jwtConfig := config.GetJwtConfig()
 	jwt := helper.NewJwt(jwtConfig)
 
+	//.- MailClient Initialize
+	mailConfig := config.GetMailConfig()
+	mailClient := mail.NewMailClient(mailConfig)
+
 	//.- Recovery Handler
 	recoveryHandler := handler.NewRecoveryHandler(logger)
 	server.Router.Use(recoveryHandler)
@@ -77,7 +82,7 @@ func main() {
 	deviceAnalyticRepository := repository.NewDeviceAnalyticRepository(logger)
 
 	//.- Service Initialize
-	userService := service.NewUserService(userRepository, db, logger, jwt)
+	userService := service.NewUserService(userRepository, mailClient, db, logger, jwt)
 	socialMediaLinkService := service.NewSocialMediaLinkService(userRepository, socialMediaLinkRepository, socialMediaTypeRepository, db, logger, jwt)
 	socialMediaAnalyticsService := service.NewSocialMediaAnalyticService(userRepository, socialMediaLinkRepository, socialMediaInteractionRepository, socialMediaAnalyticRepository, deviceAnalyticRepository, db, logger, jwt)
 	customLinkService := service.NewCustomLinkService(customLinkRepository, customThumbnailRepository, thumbnailRepository, db, logger, jwt)

@@ -120,6 +120,21 @@ func (config *Config) GetRedisConfig() RedisConfig {
 	return redisConfig
 }
 
+type MailConfig struct {
+	StmpHost     string `mapstructure:"stmp_host"`
+	StmpPort     int    `mapstructure:"stmp_port"`
+	SenderName   string `mapstructure:"sender_name"`
+	AuthEmail    string `mapstructure:"auth_email"`
+	AuthPassword string `mapstructure:"auth_password"`
+}
+
+func (config *Config) GetMailConfig() MailConfig {
+	mailConfig := MailConfig{}
+	err := config.Viper.UnmarshalKey("email-service", &mailConfig)
+	panicIfError(err)
+	return mailConfig
+}
+
 func panicIfError(err error) {
 	if err != nil {
 		panic(err)

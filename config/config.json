@@ -28,6 +28,13 @@
         "port": 6379,
         "password": "pendekinredis123456"
     },
+    "email-service": {
+        "stmp_host": "smtp-relay.sendinblue.com",
+        "stmp_port": 587,
+        "sender_name": "Pendek.In <link.pendek.in@gmail.com>",
+        "auth_email": "link.pendek.in@gmail.com",
+        "auth_password": "URPASSWORD"
+    },
     "log": {
         "level": "debug",
         "output": "app.log"
