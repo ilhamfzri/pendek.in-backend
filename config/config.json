@@ -17,14 +17,14 @@
         "resource_dir_path": "resources"
     },
     "database": {
-        "host": "localhost",
+        "host": "db",
         "port": 5432,
         "user": "pendekin",
         "password": "pendekin123456",
         "db_name": "pendekin_db"
     },
     "redis": {
-        "host": "localhost",
+        "host": "cache",
         "port": 6379,
         "password": "pendekinredis123456"
     },

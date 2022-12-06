@@ -10,3 +10,5 @@ down-container:
 	docker-compose down
 redis-cli: # make sure you already install redis client
 	redis-cli -h localhost -p 6379 -a "pendekinredis123456"
+engine:
+	go build app/main.go
